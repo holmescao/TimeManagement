@@ -1,0 +1,20 @@
+{
+    "python.pythonPath": "F:\\anaconda\\anaconda_install\\envs\\DL\\python.exe",
+    "fileheader.cursorMode": {  //此为函数注释
+        "description":"", // 函数功能描述 生成注释后在手动编辑
+        "param": "",      // 参数 生成注释后在手动编辑
+        "return": "",     // 返回值 生成注释后在手动编辑
+        "author":"Holmescao" // 创建人 写上自己的名字
+    },
+    "fileheader.customMade": {  // 此为文件头部注释
+        "Author":"Holmescao", // 创建人 写上自己的名字
+        "Date":"Do not edit", // 创建时间
+        "LastEditors":"Holmescao", // 最后一次编辑人 写上自己的名字
+        "LastEditTime":"Do not edit", // 最后一次编辑时间
+        "Description":""      // 文件描述 生成注释后在手动编辑
+        },
+    
+}
+
+
+
