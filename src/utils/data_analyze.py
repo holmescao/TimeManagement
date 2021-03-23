@@ -2,10 +2,11 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-03-16 22:15:12
+LastEditTime: 2021-03-21 22:46:53
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
+from collections import Counter
 from wordcloud import WordCloud
 import joypy
 from collections import OrderedDict
@@ -59,20 +60,17 @@ class Analyze:
                             self.output_file_path).Analyze
 
         if self.args.information:
-            last_day, last_week, last_month = \
+            last_day, _, last_month = \
                 self.GetRecentData(self.sheet_names[1])
             InformationAnalyze(last_day,
-                               last_week,
                                last_month,
                                self.output_path,
                                self.output_file_path).Analyze
 
         if self.args.harvest:
-            last_day, last_week, last_month = \
+            _, _, last_month = \
                 self.GetRecentData(self.sheet_names[2])
-            HarvestAnalyze(last_day,
-                           last_week,
-                           last_month,
+            HarvestAnalyze(last_month,
                            self.output_path,
                            self.output_file_path).Analyze
 
@@ -156,7 +154,7 @@ class ActivateAnalyze:
         self.output_path = output_path
         self.output_file_path = output_file_path
 
-        self.addFlag = '2. 学习情况'
+        self.addFlag = '#### 2. 学习情况'
 
     @property
     @class_func_timer("ActivateAnalyze")
@@ -246,7 +244,7 @@ class ActivateAnalyze:
                 for work in range(len(idx)):
                     label = states_work_dic[idx[work]]
                     ax.broken_barh([x_day_data[0][work]], [x+y_loc, high],
-                                   color=cm.Set2(
+                                   color=cm.Set3(
                         color_map[label]/len(self.work_states)),
                         label=label)
             # draw inactivate
@@ -400,7 +398,7 @@ class ActivateAnalyze:
             MergeDataOfBelowThreshold(self.data_of_pie)
 
         # process color and label
-        colors = np.array([cm.Set2(i/len(self.work_states))
+        colors = np.array([cm.Set3(i/len(self.work_states))
                            for i in range(len(self.work_states))])
         work_states = np.array(self.work_states)
         if otherdata > 0:
@@ -440,7 +438,7 @@ class ActivateAnalyze:
 
 
 class InformationAnalyze:
-    def __init__(self, last_day, last_week, last_month,
+    def __init__(self, last_day, last_month,
                  output_path, output_file_path):
         """初始化
 
@@ -451,14 +449,15 @@ class InformationAnalyze:
             output_path ([type]): 数据分析结果在本项目的保存路径
             output_file_path ([type]): 数据分析结果待插入图片到文件的路径
         """
+        assert len(last_day) > 0, \
+            u"今天的信息输入还没填写！请先在文档填写，或把`information`参数值设为False"
         self.last_day = last_day
-        self.last_week = last_week
         self.last_month = last_month
 
         self.output_path = output_path
         self.output_file_path = output_file_path
 
-        self.addFlag = '3. 信息摄入'
+        self.addFlag = '#### 3. 信息摄入'
 
     @property
     @class_func_timer("InformationAnalyze")
@@ -489,7 +488,7 @@ class InformationAnalyze:
         fig, ax = plt.subplots(figsize=(8, 6))
 
         # process color and label
-        colors = [cm.Set2(i/len(self.labels)) for i in range(len(self.labels))]
+        colors = [cm.Set3(i/len(self.labels)) for i in range(len(self.labels))]
 
         # Segment the one with the largest percentage
         explode = [0] * self.data.shape[0]
@@ -540,7 +539,7 @@ class InformationAnalyze:
         quality_list = self.stacked_bar_data.quality.values
         columns = list(self.stacked_bar_data.columns)
         columns.remove('quality')
-        colors = [cm.Set2(i/len(columns)) for i in range(len(columns))]
+        colors = [cm.Set3(i/len(columns)) for i in range(len(columns))]
 
         del self.stacked_bar_data['quality']
         stacked_bar_data = self.stacked_bar_data.values
@@ -549,7 +548,7 @@ class InformationAnalyze:
         # plot by stacking
         val = stacked_bar_data[:, 0]
         p1 = plt.bar(np.arange(len(quality_list)), val,
-                     width=0.5, color=colors[0])
+                     width=0.5, color=colors[0], tick_label=quality_list)
         sub_matrix = stacked_bar_data[:, 0:1]
         csum = np.cumsum(sub_matrix, axis=1)[:, -1]
         csum = csum.flatten()
@@ -561,8 +560,7 @@ class InformationAnalyze:
 
             val = stacked_bar_data[:, i]
             p3 = plt.bar(np.arange(len(quality_list)), val,
-                         width=0.5, bottom=csum, color=colors[i],
-                         tick_label=quality_list)
+                         width=0.5, bottom=csum, color=colors[i])
 
         sub_matrix = stacked_bar_data[:, :]
         csum = np.cumsum(sub_matrix, axis=1)[:, -1]
@@ -573,7 +571,7 @@ class InformationAnalyze:
         plt.legend(fontsize=fontsize-2, loc='upper right', labels=columns)
         plt.xlabel(u"信息质量", fontsize=fontsize)
         plt.ylabel(u"时长(分钟)", fontsize=fontsize)
-        plt.xticks(fontsize=fontsize-5)
+        plt.xticks(fontsize=fontsize)
         plt.yticks(fontsize=fontsize)
         plt.ylim([0, max(csum)*1.2])
         plt.title("今日信息摄入情况", fontsize=fontsize+5)
@@ -604,7 +602,7 @@ class InformationAnalyze:
 
         columns = self.stacked_bar_data.columns.tolist()
         columns.remove('date')
-        colors = [cm.Set2(i/len(columns)) for i in range(len(columns))]
+        colors = [cm.Set3(i/len(columns)) for i in range(len(columns))]
 
         fig, ax = plt.subplots(figsize=(8, 6))
 
@@ -625,8 +623,8 @@ class InformationAnalyze:
             val = stacked_bar_data[:, i]
             p3 = ax.bar(np.arange(len(date_list)), val,
                         width=0.5, bottom=csum, color=colors[i],
-                        label=columns[i],
-                        tick_label=list(map(ymd2md, date_list)))
+                        label=columns[i],)
+            # tick_label=list(map(ymd2md, date_list)))
 
         sub_matrix = stacked_bar_data[:, :]
         csum = np.cumsum(sub_matrix, axis=1)[:, -1]
@@ -634,7 +632,9 @@ class InformationAnalyze:
 
         # curve
         ax1 = ax.twinx()
-        high_rate = stacked_bar_data[:, 0] / np.sum(stacked_bar_data, axis=1)
+        res_sum = np.sum(stacked_bar_data, axis=1)
+        res_sum[res_sum == 0] = 1e-7
+        high_rate = stacked_bar_data[:, 0] / res_sum
         ax1.plot(np.arange(len(date_list)), high_rate,
                  color='red', label='rate of high',
                  marker='o', markersize=5)
@@ -653,6 +653,9 @@ class InformationAnalyze:
         ax.tick_params(labelsize=fontsize)
         ax.set_ylabel(u"时长(分钟)", fontsize=fontsize)
         ax.set_ylim([0, max(csum)*1.2])
+        md_list = list(map(ymd2md, date_list))
+        ax.set_xticks(range(0, 30, 4))
+        ax.set_xticklabels(md_list[::4])
 
         ax1.set_label("high rate")
         ax1.tick_params(labelsize=fontsize)
@@ -664,31 +667,30 @@ class InformationAnalyze:
 
 
 class HarvestAnalyze:
-    def __init__(self, last_day, last_week, last_month,
+    def __init__(self, last_month,
                  output_path, output_file_path):
         """初始化
 
         Args:
-            last_day ([type]): 最近1天的数据（即今天）
-            last_week ([type]): 最近7天的数据
             last_month ([type]): 最近30天的数据
             output_path ([type]): 数据分析结果在本项目的保存路径
             output_file_path ([type]): 数据分析结果待插入图片到文件的路径
         """
-        self.last_day = last_day
-        self.last_week = last_week
+        assert len(last_month) > 0, \
+            "最近一个月的收获还没填写！请先在文档填写，或把`harvest`参数值设为False"
         self.last_month = last_month
 
         self.output_path = output_path
         self.output_file_path = output_file_path
 
-        self.addFlag = '4. 收获'
+        self.addFlag = '#### 4. 收获'
 
     @property
     @class_func_timer("HarvestAnalyze")
     def Analyze(self):
         """可视化分析"""
         self.LastMonthCloud(fig_id=9, fig_name='harvest-cloud')
+        self.LastMonthBar(fig_id=10, fig_name='harvest-vbar')
 
     def LastMonthCloud(self, fig_id, fig_name):
         """画最近1月的收获云图
@@ -723,6 +725,49 @@ class HarvestAnalyze:
         # params
         fontsize = 30
         plt.title(u"近一个月收获情况", fontsize=fontsize)
+
+        plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
+        plt.close()
+
+    def LastMonthBar(self, fig_id, fig_name):
+        """画最近1月的收获云图
+
+        Args:
+            fig_id ([type]): 图片编号
+            fig_name ([type]): 图片名称
+        """
+        self.word_list = MergeWord(self.last_month)
+
+        self.fig_path = generate_fig_path(date_list=GetNDayList(30),
+                                          root_path=self.output_path,
+                                          fig_id=fig_id, fig_name=fig_name)
+
+        self.PlotMonthvBar
+        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+
+    @property
+    def PlotMonthvBar(self):
+        word = pd.value_counts(self.word_list)
+        data = word.to_list()
+        label = word.index.to_list()
+        data.reverse()
+        label.reverse()
+
+        fig, ax = plt.subplots(figsize=(8, 6))
+        fontsize = 15
+        b = ax.barh(range(len(label)), data, color='deeppink', height=0.7)
+
+        # 为横向水平的柱图右侧添加数据标签
+        for rect in b:
+            w = rect.get_width()
+            ax.text(w, rect.get_y()+rect.get_height()/2, '%d' %
+                    int(w), ha='left', va='center', fontsize=fontsize)
+
+        ax.set_yticks(range(len(label)))
+        ax.set_yticklabels(label, fontsize=fontsize)
+        plt.xticks(fontsize=fontsize)
+        plt.xlabel("次数", fontsize=fontsize)
+        plt.title(u"近一个月收获情况", fontsize=2*fontsize)
 
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
         plt.close()

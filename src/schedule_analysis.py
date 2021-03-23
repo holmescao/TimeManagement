@@ -2,8 +2,9 @@
 Author: Holmescao
 Date: 2021-03-16 12:57:18
 LastEditors: Holmescao
-LastEditTime: 2021-03-16 17:25:02
+LastEditTime: 2021-03-22 16:31:09
 Description: 自动分析schedule文档信息，用于个人时间分析与管理
+RunTime：15 sec
 '''
 
 from utils.data_analyze import Analyze

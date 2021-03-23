@@ -2,9 +2,10 @@
 Author: Holmescao
 Date: 2021-03-16 13:22:08
 LastEditors: Holmescao
-LastEditTime: 2021-03-16 17:22:43
+LastEditTime: 2021-03-22 16:42:24
 Description: 用于时间管理分析的通用函数
 '''
+import sys
 import numpy as np
 import pandas as pd
 import re
@@ -63,9 +64,13 @@ def ExtractDateFromStr(string):
     string = string.replace("年", "-")
     string = string.replace("月", "-")
     string = string.replace("日", "-")
-    date_re_str = r"(\d{4}-\d{1,2}-\d{1,2})"
-    match = re.search(date_re_str, string)
-    date = match.group(1)
+    date_re_str = r"(\d{4}-\d{2}-\d{2})"
+    try:
+        match = re.search(date_re_str, string)
+        date = match.group(1)
+    except AttributeError:
+        print(u"error: schedule文件命名应该为`xxxx年xx月xx日.md`")
+        sys.exit()
 
     date = datetime.datetime.strptime(
         date, "%Y-%m-%d").strftime("%Y-%m-%d")
@@ -443,19 +448,26 @@ def DataFormatForMonthStackBar(data):
 
     date_list = data.date.unique().tolist()
     quality_type = ['high', 'middle', 'low']
-    columns = ['date']+quality_type
 
-    date_quality = np.zeros((len(date_list), len(columns)))
+    date_quality = np.zeros((len(date_list), len(quality_type)))
 
     for d, date in enumerate(date_list):
         date_df = data[data['date'] == date].reset_index()
         for i in range(len(date_df)):
             qt = str(date_df['quality'].iloc[i])
-            qt_idx = quality_type.index(qt) + 1  # first col is date
+            qt_idx = quality_type.index(qt)
             date_quality[d, qt_idx] = int(date_df['duration'].iloc[i])
 
-    new_df = pd.DataFrame(date_quality, columns=columns)
-    new_df['date'] = date_list
+    date_quality_np = np.zeros((30, 4), dtype=object)
+    last30_date_list = GetNDayList(30)
+    date_quality_np[:, 0] = last30_date_list
+    for d in range(date_quality_np.shape[0]):
+        try:
+            idx = date_list.index(last30_date_list[d])
+            date_quality_np[d, 1:] = date_quality[idx]
+        except ValueError:
+            continue
+    new_df = pd.DataFrame(date_quality_np, columns=['date']+quality_type)
 
     return new_df
 
@@ -478,11 +490,10 @@ def GetOutputFilePath(root_path, suffix='.md'):
     Returns:
         [type]: 处理结果的保存路径
     """
-    today_dt = datetime.datetime.now()
-
-    year = str(today_dt.year)
-    month = str(today_dt.month)
-    day = str(today_dt.day)
+    today_dt = datetime.date.today()
+    year = str(today_dt.year).zfill(4)
+    month = str(today_dt.month).zfill(2)
+    day = str(today_dt.day).zfill(2)
     today_date = f"{year}年{month}月{day}日"
 
     output_file_path = os.path.join(root_path, today_date+suffix)

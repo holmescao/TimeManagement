@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-13 16:41:06
 LastEditors: Holmescao
-LastEditTime: 2021-03-16 16:32:26
+LastEditTime: 2021-03-21 21:48:37
 Description: schedule数据处理模块，包含对执行信息、信息摄入、收获3种类型信息的处理。
 '''
 
@@ -31,9 +31,9 @@ class Schedule:
         self.tmp_path = tmp_path
         self.data_columns = data_columns
 
-        self.scheduleFlag = '### 计划\n'
-        self.carryFlag = '### 执行\n'
-        self.reviewFlag = '### 复盘\n'
+        self.scheduleFlag = '### 一、计划\n'
+        self.carryFlag = '### 二、执行\n'
+        self.reviewFlag = '### 三、复盘\n'
 
         mkdir(tmp_path)
 
@@ -118,6 +118,7 @@ class Schedule:
                 time_period = time_regex.findall(line)
 
                 # change strptime format
+                assert len(time_period) == 2, "必须在`执行`中输入`开始`、`结束`的时间段"
                 startTime = datetime.datetime.strptime(
                     self.date+" "+time_period[0], "%Y-%m-%d %H:%M:%S")
                 endTime = datetime.datetime.strptime(
@@ -187,6 +188,7 @@ class Schedule:
                 # append record
                 quality = str_list[0]
                 assert quality in 'hml', u"信息质量填写有误，只能是'h','m','l'"
+
                 if quality == 'h':
                     quality = 'high'
                 elif quality == 'm':
