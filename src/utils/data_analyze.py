@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-03-21 22:46:53
+LastEditTime: 2021-03-23 14:30:30
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
@@ -330,7 +330,7 @@ class ActivateAnalyze:
             fig_id ([type]): 图片编号
             fig_name ([type]): 图片名称
         """
-        NdayActivateTime = LastNdayActivateTime(self.last_week, back_days=30)
+        NdayActivateTime = LastNdayActivateTime(self.last_month, back_days=30)
         self.activate = SumTimePerDay(NdayActivateTime)
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(30),
