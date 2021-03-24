@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-03-23 14:30:30
+LastEditTime: 2021-03-24 22:51:31
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
@@ -52,6 +52,7 @@ class Analyze:
             last_day, last_week, last_month = \
                 self.GetRecentData(self.sheet_names[0])
             ActivateAnalyze(self.args.fast,
+                            self.args.today_dt,
                             last_day,
                             last_week,
                             last_month,
@@ -62,7 +63,8 @@ class Analyze:
         if self.args.information:
             last_day, _, last_month = \
                 self.GetRecentData(self.sheet_names[1])
-            InformationAnalyze(last_day,
+            InformationAnalyze(self.args.today_dt,
+                               last_day,
                                last_month,
                                self.output_path,
                                self.output_file_path).Analyze
@@ -70,7 +72,8 @@ class Analyze:
         if self.args.harvest:
             _, _, last_month = \
                 self.GetRecentData(self.sheet_names[2])
-            HarvestAnalyze(last_month,
+            HarvestAnalyze(self.args.today_dt,
+                           last_month,
                            self.output_path,
                            self.output_file_path).Analyze
 
@@ -100,11 +103,10 @@ class Analyze:
         Returns:
             [type]: 前n天的指定类别数据
         """
-        today_dt = datetime.date.today()
 
-        current_dt = today_dt - datetime.timedelta(days=back_day-1)
+        current_dt = self.args.today_dt - datetime.timedelta(days=back_day-1)
 
-        while current_dt <= today_dt:
+        while current_dt <= self.args.today_dt:
             current_date = current_dt.strftime("%Y-%m-%d")
             file_path = os.path.join(self.input_path, current_date+suffix)
 
@@ -131,7 +133,7 @@ class Analyze:
 
 
 class ActivateAnalyze:
-    def __init__(self, fast, last_day, last_week, last_month,
+    def __init__(self, fast, today_dt, last_day, last_week, last_month,
                  work_states, output_path, output_file_path):
         """初始化
 
@@ -144,6 +146,7 @@ class ActivateAnalyze:
             output_file_path ([type]): 数据分析结果待插入图片到文件的路径
         """
         self.fast = fast
+        self.today_dt = today_dt
 
         self.last_day = last_day
         self.last_week = last_week
@@ -173,10 +176,11 @@ class ActivateAnalyze:
             fig_id ([type]): 图片编号
             fig_name ([type]): 图片名称
         """
-        NdayActivateTime = LastNdayActivateTime(self.last_day, back_days=1)
+        NdayActivateTime = LastNdayActivateTime(
+            self.last_day, self.today_dt, back_days=1)
         self.activate_data = NdayActivateTime[0]
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(1),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 1),
                                           root_path=self.output_path,
                                           fig_id=fig_id, fig_name=fig_name)
 
@@ -215,9 +219,9 @@ class ActivateAnalyze:
             fig_name ([type]): 图片名称
         """
         self.activate_data, self.inactivate_data = DataFormatForBrokenBarh(
-            self.work_states, self.last_week, back_days=7)
+            self.work_states, self.last_week, self.today_dt, back_days=7)
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(7),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 7),
                                           root_path=self.output_path,
                                           fig_id=fig_id,
                                           fig_name=fig_name)
@@ -257,7 +261,7 @@ class ActivateAnalyze:
         ax.set_xticks(list(range(0, 3600*24+1, 3600*interval)))
         ax.set_xticklabels(list(range(0, 24+1, interval)), fontsize=fontsize-5)
         ax.set_yticks(list(range(1, n_day+1)))
-        ax.set_yticklabels(GetNDayList(7), fontsize=fontsize)
+        ax.set_yticklabels(GetNDayList(self.today_dt, 7), fontsize=fontsize)
         plt.xlabel(u"小时", fontsize=fontsize)
         plt.ylabel(u"日期", fontsize=fontsize)
         plt.title(u"近一周投入时间", fontsize=fontsize+5)
@@ -280,10 +284,12 @@ class ActivateAnalyze:
             fig_id ([type]): 图片编号
             fig_name ([type]): 图片名称
         """
-        NdayActivateTime = LastNdayActivateTime(self.last_week, back_days=7)
-        self.frequent = GenerateFrequent(NdayActivateTime, self.fast)
+        NdayActivateTime = LastNdayActivateTime(
+            self.last_week, self.today_dt, back_days=7)
+        self.frequent = GenerateFrequent(
+            NdayActivateTime, self.today_dt, self.fast)
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(7),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 7),
                                           root_path=self.output_path,
                                           fig_id=fig_id, fig_name=fig_name)
 
@@ -330,10 +336,11 @@ class ActivateAnalyze:
             fig_id ([type]): 图片编号
             fig_name ([type]): 图片名称
         """
-        NdayActivateTime = LastNdayActivateTime(self.last_month, back_days=30)
+        NdayActivateTime = LastNdayActivateTime(
+            self.last_month, self.today_dt, back_days=30)
         self.activate = SumTimePerDay(NdayActivateTime)
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(30),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
                                           root_path=self.output_path,
                                           fig_id=fig_id, fig_name=fig_name)
 
@@ -343,7 +350,7 @@ class ActivateAnalyze:
     @property
     def PlotMonthBar(self):
         """活跃时间柱形图"""
-        date_list = GetNDayList(30)
+        date_list = GetNDayList(self.today_dt, 30)
         md_list = list(map(ymd2md, date_list))
 
         fig, ax = plt.subplots(figsize=(8, 6))
@@ -378,11 +385,11 @@ class ActivateAnalyze:
             fig_name ([type]): 图片名称
         """
         data_of_BrokenBarh, _ = DataFormatForBrokenBarh(
-            self.work_states, self.last_month, back_days=30)
+            self.work_states, self.last_month, self.today_dt, back_days=30)
         self.data_of_pie = DataFormatForPie(
             data_of_BrokenBarh, self.work_states)
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(30),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
                                           root_path=self.output_path,
                                           fig_id=fig_id,
                                           fig_name=fig_name)
@@ -438,7 +445,7 @@ class ActivateAnalyze:
 
 
 class InformationAnalyze:
-    def __init__(self, last_day, last_month,
+    def __init__(self, today_dt, last_day, last_month,
                  output_path, output_file_path):
         """初始化
 
@@ -449,6 +456,7 @@ class InformationAnalyze:
             output_path ([type]): 数据分析结果在本项目的保存路径
             output_file_path ([type]): 数据分析结果待插入图片到文件的路径
         """
+        self.today_dt = today_dt
         assert len(last_day) > 0, \
             u"今天的信息输入还没填写！请先在文档填写，或把`information`参数值设为False"
         self.last_day = last_day
@@ -475,7 +483,7 @@ class InformationAnalyze:
             fig_name ([type]): 图片名称
         """
         self.data, self.labels = GetQualityDuration(self.last_day)
-        self.fig_path = generate_fig_path(date_list=GetNDayList(1),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 1),
                                           root_path=self.output_path,
                                           fig_id=fig_id, fig_name=fig_name)
 
@@ -526,7 +534,7 @@ class InformationAnalyze:
         """
         self.stacked_bar_data = DataFormatForStackBar(self.last_day)
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(1),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 1),
                                           root_path=self.output_path,
                                           fig_id=fig_id, fig_name=fig_name)
 
@@ -586,9 +594,10 @@ class InformationAnalyze:
             fig_id ([type]): 图片编号
             fig_name ([type]): 图片名称
         """
-        self.stacked_bar_data = DataFormatForMonthStackBar(self.last_month)
+        self.stacked_bar_data = DataFormatForMonthStackBar(
+            self.last_month, self.today_dt)
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(30),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
                                           root_path=self.output_path,
                                           fig_id=fig_id, fig_name=fig_name)
 
@@ -667,7 +676,7 @@ class InformationAnalyze:
 
 
 class HarvestAnalyze:
-    def __init__(self, last_month,
+    def __init__(self, today_dt, last_month,
                  output_path, output_file_path):
         """初始化
 
@@ -676,6 +685,7 @@ class HarvestAnalyze:
             output_path ([type]): 数据分析结果在本项目的保存路径
             output_file_path ([type]): 数据分析结果待插入图片到文件的路径
         """
+        self.today_dt = today_dt
         assert len(last_month) > 0, \
             "最近一个月的收获还没填写！请先在文档填写，或把`harvest`参数值设为False"
         self.last_month = last_month
@@ -701,7 +711,7 @@ class HarvestAnalyze:
         """
         self.word_list = MergeWord(self.last_month)
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(30),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
                                           root_path=self.output_path,
                                           fig_id=fig_id, fig_name=fig_name)
 
@@ -738,7 +748,7 @@ class HarvestAnalyze:
         """
         self.word_list = MergeWord(self.last_month)
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(30),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
                                           root_path=self.output_path,
                                           fig_id=fig_id, fig_name=fig_name)
 

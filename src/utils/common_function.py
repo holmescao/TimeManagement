@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:22:08
 LastEditors: Holmescao
-LastEditTime: 2021-03-22 16:42:24
+LastEditTime: 2021-03-24 22:48:15
 Description: 用于时间管理分析的通用函数
 '''
 import sys
@@ -150,11 +150,11 @@ def DatetimeToSecond(dt):
     return seconds
 
 
-def GetNDayList(n):
+def GetNDayList(today_dt, n):
     before_n_days = []
     for i in range(n)[::-1]:
         before_n_days.append(
-            str(datetime.date.today() - datetime.timedelta(days=i)))
+            str(today_dt - datetime.timedelta(days=i)))
     return before_n_days
 
 
@@ -196,14 +196,14 @@ def ActivateSecondsPerHour(current_date_data):
     return list(activate)
 
 
-def LastNdayActivateTime(df, back_days):
+def LastNdayActivateTime(df, today_dt, back_days):
     # datetime to second
     startSecond = df['startTime'].apply(DatetimeToSecond)
     endSecond = df['endTime'].apply(DatetimeToSecond)
     tuple_of_Activate = tuple(zip(startSecond, endSecond))
 
     NdayActivateTime = []
-    date_list = GetNDayList(back_days)
+    date_list = GetNDayList(today_dt, back_days)
     for date in date_list:
         idx = df[df['date'].str.contains(date)].index
         if len(idx) > 0:
@@ -270,53 +270,13 @@ def InsertFigureToFile(fig_path, output_file_path, addFlag):
         fp.writelines(lines)
 
 
-def GetRecentData(self, sheet_name):
-    last_day = self.GetLastData(1,  sheet_name)
-    last_week = self.GetLastData(7, sheet_name)
-    last_month = self.GetLastData(30, sheet_name)
-
-    return last_day, last_week, last_month
-
-
-def GetLastData(self, back_day, sheet_name, suffix='.xlsx'):
-    today_dt = datetime.date.today()
-
-    current_dt = today_dt - datetime.timedelta(days=back_day-1)
-
-    while current_dt <= today_dt:
-        current_date = current_dt.strftime("%Y-%m-%d")
-        file_path = os.path.join(self.input_path, current_date+suffix)
-
-        try:
-            cur_df = pd.read_excel(file_path, sheet_name=sheet_name)
-            try:
-                overall_df = pd.concat([overall_df, cur_df], axis=0)
-            except NameError:
-                overall_df = cur_df
-
-        except Exception:
-            pass
-
-        current_dt += datetime.timedelta(days=1)
-
-    # if the last N day no schedule
-    if 'overall_df' in dir():
-        overall_df = overall_df.reset_index(drop=True)
-        exist_df = True
-    else:
-        assert 'overall_df' in dir(
-        ), f"近{back_day}天没有{sheet_name}信息，无法分析。请先在文本添加"
-
-    return overall_df, exist_df
-
-
-def DataFormatForBrokenBarh(work_states, df, back_days):
+def DataFormatForBrokenBarh(work_states, df, today_dt, back_days):
     work_states_dic = dict(zip(work_states, range(len(work_states))))
     startSecond = df['startTime'].apply(DatetimeToSecond)
     tuple_of_BrokenBarh = tuple(zip(startSecond, df['duration']))
     data_of_BrokenBarh = []
     data_of_reBrokenBarh = []
-    date_list = GetNDayList(back_days)
+    date_list = GetNDayList(today_dt, back_days)
     for date in date_list:
         idx = df[df['date'].str.contains(date)].index
         if len(idx) > 0:
@@ -356,9 +316,9 @@ def DataFormatForBrokenBarh(work_states, df, back_days):
     return data_of_BrokenBarh, data_of_reBrokenBarh
 
 
-def GenerateFrequent(data, fast):
+def GenerateFrequent(data, today_dt, fast):
     length = len(data)
-    date_list = GetNDayList(length)
+    date_list = GetNDayList(today_dt, length)
 
     d_date_data = []
     for d in range(length):
@@ -441,7 +401,7 @@ def DataFormatForStackBar(data):
     return new_df.reset_index(drop=True)
 
 
-def DataFormatForMonthStackBar(data):
+def DataFormatForMonthStackBar(data, today_dt):
     data = data.groupby(['date', 'quality']).agg(
         {'duration': np.sum}).reset_index()
     data = data.sort_values(by=['date'])
@@ -459,7 +419,7 @@ def DataFormatForMonthStackBar(data):
             date_quality[d, qt_idx] = int(date_df['duration'].iloc[i])
 
     date_quality_np = np.zeros((30, 4), dtype=object)
-    last30_date_list = GetNDayList(30)
+    last30_date_list = GetNDayList(today_dt, 30)
     date_quality_np[:, 0] = last30_date_list
     for d in range(date_quality_np.shape[0]):
         try:
@@ -480,7 +440,7 @@ def MergeWord(df):
     return df['label'].to_list()
 
 
-def GetOutputFilePath(root_path, suffix='.md'):
+def GetOutputFilePath(today_dt, root_path, suffix='.md'):
     """获取处理结果的保存路径
 
     Args:
@@ -490,7 +450,6 @@ def GetOutputFilePath(root_path, suffix='.md'):
     Returns:
         [type]: 处理结果的保存路径
     """
-    today_dt = datetime.date.today()
     year = str(today_dt.year).zfill(4)
     month = str(today_dt.month).zfill(2)
     day = str(today_dt.day).zfill(2)
