@@ -29,7 +29,7 @@
 
 本项目针对个人每日规划和执行情况，提供了记录文本模板（基于`typora`的markdown文件），基于markdown里的内容，通过运行脚本进行数据处理，并提供多维度可视化分析。此外，分析结果会自动插入到每日计划的markdown文件中。
 
-tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysis.py --demo True`，即可在`'./demo/'`下得到可视化分析后的示例markdown文档。
+tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysis.py --demo True`，即可在`'./demo/schedule/'`下得到可视化分析后的示例markdown文档。
 
 ## 功能
 
@@ -85,7 +85,7 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 
 ### 极速演示版
 
-下载源码解压后，进入`src`目录，直接运行`schedule_analysis.py --demo True`，即可在`'./demo/'`下得到可视化分析后的示例markdown文档。
+下载源码解压后，进入`src`目录，直接运行`schedule_analysis.py --demo True`，即可在`'./demo/schedule/'`下得到可视化分析后的示例markdown文档。
 
 ### 正常版
 
