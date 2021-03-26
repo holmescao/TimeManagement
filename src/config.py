@@ -7,7 +7,7 @@ Description:
 '''
 config = {
     'path': {
-        'root_path': 'D:/mymind/schedule/',
+        'root_path': './schedule/daily/',
         "tmp_path": './tmp/',
         "output_path": './output/',
     },
