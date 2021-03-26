@@ -37,11 +37,11 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 当日投入总时长（近30天）
   - 各类别任务投入比例（近30天）
 	<center class='half'>
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure1/Figure1-activate-bar-20210326_20210326.png' width="100"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure2\Figure2-activate-brokenbarh-20210320_20210326.png' width="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure3\Figure3-activate-waterfall-20210320_20210326.png' width="300"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure4\Figure4-activate-bar-20210225_20210326.png' width="400"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure5\Figure5-investment-pie-20210225_20210326.png' width="500"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure1/Figure1-activate-bar-20210326_20210326.png' width="250"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure2\Figure2-activate-brokenbarh-20210320_20210326.png' width="250"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure3\Figure3-activate-waterfall-20210320_20210326.png' width="250"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure4\Figure4-activate-bar-20210225_20210326.png' width="250"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure5\Figure5-investment-pie-20210225_20210326.png' width="250"' />
     </center>
   
 - 信息摄入情况：
