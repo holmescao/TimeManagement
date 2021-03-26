@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 12:57:18
 LastEditors: Holmescao
-LastEditTime: 2021-03-26 15:26:29
+LastEditTime: 2021-03-26 15:32:20
 Description: 自动分析schedule文档信息，用于个人时间分析与管理
 RunTime：15 sec
 '''
@@ -67,7 +67,7 @@ if __name__ == '__main__':
                         help='use fast version to visualization')
     parser.add_argument('--today_dt', default=datetime.date.today()-datetime.timedelta(days=0),
                         help='today datetime format')
-    parser.add_argument('--demo', type=bool, default=True,
+    parser.add_argument('--demo', type=bool, default=False,
                         help='run demo.')
     args = parser.parse_args()
 
