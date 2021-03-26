@@ -5,3 +5,4 @@ singlefile.py
 # dir
 src/tmp/*
 src/schedule/*
+src/output/*
