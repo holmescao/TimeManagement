@@ -1,6 +1,6 @@
 # .py
 singlefile.py
-src/config.*
+/src/config.*
 
 # dir
 src/tmp/
