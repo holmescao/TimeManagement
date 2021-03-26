@@ -1,4 +1,3 @@
-[toc]
 - [TimeManagement](#timemanagement)
   - [前言](#前言)
   - [简介​​](#简介)
@@ -73,7 +72,7 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure7\Figure7-dayinformation-stackbar-20210326_20210326.png' width="250" height="200"' />
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure8\Figure8-monthinformation-stackbar-20210225_20210326.png' width="250" height="200"' />
     </center>
-    
+  
 - 收获情况：
   
   - 各类收获对比、排序（近30天）
