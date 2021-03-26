@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:22:08
 LastEditors: Holmescao
-LastEditTime: 2021-03-24 22:48:15
+LastEditTime: 2021-03-26 14:10:03
 Description: 用于时间管理分析的通用函数
 '''
 import sys
@@ -127,6 +127,24 @@ def OpenFile(file):
             context = f.readlines()
 
     return context
+
+
+def WriteFile(file, data):
+    """打开文件，并写入文件内容
+
+    Args:
+        file ([type]): 文件路径
+        data ([type]): 文件内容
+
+    Returns:
+        [type]: 文件内容
+    """
+    try:
+        with open(file, mode='w', encoding='gbk') as f:
+            f.writelines(data)
+    except Exception:
+        with open(file, mode='w', encoding='utf-8') as f:
+            f.writelines(data)
 
 
 def SaveToExcel(df_list, save_path):

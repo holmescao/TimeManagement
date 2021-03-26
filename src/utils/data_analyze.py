@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-03-24 22:51:31
+LastEditTime: 2021-03-26 14:21:36
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
@@ -412,6 +412,12 @@ class ActivateAnalyze:
             colors = list(colors[splitIdx]) + [cm.hsv(0)]
             ohter_labels = '\n'.join(work_states[mergeIdx])
             work_states = list(work_states[splitIdx]) + ['others']
+        else:
+            colors = list(colors[splitIdx])
+            ohter_labels = 'null'
+            work_states = list(work_states[splitIdx])
+
+            data = data[:-1]
 
         # Segment the one with the largest percentage
         explode = [0] * data.shape[0]
