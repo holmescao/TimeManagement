@@ -29,11 +29,19 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 
 - 投入情况
   - 每小时的投入时长（当天）
+  
   - 每时每刻在做什么任务（近7天）
+  
   - 一天之中投入时长的概率分布（近7天）
+  
   - 当日投入总时长（近30天）
+  
   - 各类别任务投入比例（近30天）
-  ![Figure1](C:\Users\Admistr\Desktop\TimeManagement\src\output\figure\Figure1\Figure1-activate-bar-20210326_20210326.png)
+    ![Figure1](https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure1/Figure1-activate-bar-20210326_20210326.png)
+  
+	<center class='half'>
+	<img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure1/Figure1-activate-bar-20210326_20210326.png' style='zoom:20%;' />
+	</center>
   
 - 信息摄入情况：
   - 高、中、低质量信息摄入比例（当天）
