@@ -3,4 +3,5 @@ singlefile.py
 /src/config.py
 
 # dir
-src/tmp/
+src/tmp/*
+src/schedule/*
