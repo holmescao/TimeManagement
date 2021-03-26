@@ -57,10 +57,11 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 - 收获情况：
   
   - 各类收获对比、排序（近30天）
-    <center class='half'>
+
+  <center class='half'>
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure9\Figure9-harvest-cloud-20210225_20210326.png' width="250" height="200"' />
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure10\Figure10-harvest-vbar-20210225_20210326.png' width="250" height="200"' />
-    </center>
+  </center>
 ## 使用方法
 
 ### 极速演示版
