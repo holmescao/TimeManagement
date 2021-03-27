@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-13 16:41:06
 LastEditors: Holmescao
-LastEditTime: 2021-03-21 21:48:37
+LastEditTime: 2021-03-27 10:54:04
 Description: schedule数据处理模块，包含对执行信息、信息摄入、收获3种类型信息的处理。
 '''
 
@@ -58,9 +58,8 @@ class Schedule:
 
         for file in files_path:
             self.date = ExtractDateFromStr(file)
-
             # avoid redundant process, except today's file
-            if (self.date not in exist_files) or (file == files_path[-1]):
+            if (self.date not in exist_files) or (self.date == str(self.args.today_dt)):
                 self.context = OpenFile(file)
 
                 # process data
