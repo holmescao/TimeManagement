@@ -19,6 +19,7 @@
   - [依赖](#依赖)
     - [1.软件](#1软件)
     - [2. python第三方库](#2-python第三方库)
+  - [TODO](#todo)
 # TimeManagement
 
 ## 前言
@@ -183,4 +184,8 @@ note：信息质量只能是`h\m\l`三种，但中间的信息来源可以自选
 如果安装速度过慢，可以换源，即采用如下命令：
 
 `pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple/ `
+
+## TODO
+
+1. 在投入那边，把当天各个标签执行总时长和预计总时长画柱状图，其中预计总时长用背景阴影，谁长就谁在底部
 
