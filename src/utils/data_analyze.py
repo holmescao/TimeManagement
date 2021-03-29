@@ -2,11 +2,12 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-03-26 14:21:36
+LastEditTime: 2021-03-29 12:29:08
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
 from collections import Counter
+from numpy.lib.function_base import _percentile_dispatcher
 from wordcloud import WordCloud
 import joypy
 from collections import OrderedDict
@@ -159,6 +160,8 @@ class ActivateAnalyze:
 
         self.addFlag = '#### 2. 学习情况'
 
+        self.fig_type = "activate"
+
     @property
     @class_func_timer("ActivateAnalyze")
     def Analyze(self):
@@ -168,6 +171,68 @@ class ActivateAnalyze:
         self.LastWeekWaterfall(fig_id=3, fig_name='activate-waterfall')
         self.LastMonthBar(fig_id=4, fig_name='activate-bar')
         self.LastMonthPie(fig_id=5, fig_name='investment-pie')
+        self.LastDayCompBar(fig_id=6, fig_name='activate-predict-bar')
+
+    def LastDayCompBar(self, fig_id, fig_name):
+        """画最近1天的每个label的投入与预计时间的对比柱形图
+
+        Args:
+            fig_id ([type]): 图片编号
+            fig_name ([type]): 图片名称
+        """
+        self.compbar, self.labels = DateFormatForCompBar(self.last_day)
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 1),
+                                          root_path=self.output_path,
+                                          fig_type=self.fig_type,
+                                          fig_id=fig_id, fig_name=fig_name)
+
+        self.PlotCompBar
+        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+
+    @property
+    def PlotCompBar(self):
+        """投入与预计时间的对比柱形图"""
+        fig, ax = plt.subplots(figsize=(8, 6))
+
+        xx = np.arange(self.compbar.shape[1])
+        # bar
+        for x_i in xx:
+            data_i = self.compbar[:, x_i]
+            real, pred = data_i[0], data_i[1]
+            gap = abs(real-pred)
+            if pred >= real:
+                plt.bar(x_i, height=real, label='real',
+                        color=cm.hsv(0.4), alpha=0.8, hatch='/')
+                plt.bar(x_i, height=gap, bottom=real, label='prediction',
+                        color=cm.hsv(0), alpha=0.8, edgecolor=cm.hsv(0))
+
+            else:
+                plt.bar(x_i, height=pred, label='prediction',
+                        color=cm.hsv(0), alpha=0.8, edgecolor=cm.hsv(0))
+                plt.bar(x_i, height=gap, bottom=pred, label='real',
+                        color=cm.hsv(0.4), alpha=0.8, hatch='/')
+
+        # params
+        fontsize = 20
+
+        # drop the redundant of labels via `dict.keys()`
+        handles, labels = plt.gca().get_legend_handles_labels()
+        by_label = OrderedDict(zip(labels, handles))
+        plt.legend(by_label.values(), by_label.keys(),
+                   loc='upper right',
+                   ncol=1, fontsize=fontsize)
+
+        plt.xlabel(u"任务", fontsize=fontsize)
+        plt.ylabel(u"时长(小时)", fontsize=fontsize)
+        plt.xticks(fontsize=fontsize)
+        plt.yticks(fontsize=fontsize)
+
+        task_labels = ['task%d\n%s' % (i+1, self.labels[i]) for i in xx]
+        plt.xticks(ticks=xx, labels=task_labels)
+        plt.title("今日各任务投入与预测时间情况", fontsize=fontsize+5)
+
+        plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
+        plt.close()
 
     def LastDayBar(self, fig_id, fig_name):
         """画最近1天的投入时间柱形图
@@ -182,6 +247,7 @@ class ActivateAnalyze:
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 1),
                                           root_path=self.output_path,
+                                          fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotDayBar
@@ -223,6 +289,7 @@ class ActivateAnalyze:
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 7),
                                           root_path=self.output_path,
+                                          fig_type=self.fig_type,
                                           fig_id=fig_id,
                                           fig_name=fig_name)
 
@@ -291,6 +358,7 @@ class ActivateAnalyze:
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 7),
                                           root_path=self.output_path,
+                                          fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
         # 7.14sec
@@ -342,6 +410,7 @@ class ActivateAnalyze:
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
                                           root_path=self.output_path,
+                                          fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotMonthBar
@@ -391,6 +460,7 @@ class ActivateAnalyze:
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
                                           root_path=self.output_path,
+                                          fig_type=self.fig_type,
                                           fig_id=fig_id,
                                           fig_name=fig_name)
         self.PlotPie
@@ -473,13 +543,15 @@ class InformationAnalyze:
 
         self.addFlag = '#### 3. 信息摄入'
 
+        self.fig_type = "information"
+
     @property
     @class_func_timer("InformationAnalyze")
     def Analyze(self):
         """可视化分析"""
-        self.LastDayPie(fig_id=6, fig_name='dayinformation-pie')
-        self.LastDayStackBar(fig_id=7, fig_name='dayinformation-stackbar')
-        self.LastMonthStackBar(fig_id=8, fig_name='monthinformation-stackbar')
+        self.LastDayPie(fig_id=1, fig_name='dayinformation-pie')
+        self.LastDayStackBar(fig_id=2, fig_name='dayinformation-stackbar')
+        self.LastMonthStackBar(fig_id=3, fig_name='monthinformation-stackbar')
 
     def LastDayPie(self, fig_id, fig_name):
         """画最近1天的信息摄入饼图
@@ -491,6 +563,7 @@ class InformationAnalyze:
         self.data, self.labels = GetQualityDuration(self.last_day)
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 1),
                                           root_path=self.output_path,
+                                          fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotPieForInformation
@@ -542,6 +615,7 @@ class InformationAnalyze:
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 1),
                                           root_path=self.output_path,
+                                          fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotStackBarForInformation
@@ -605,6 +679,7 @@ class InformationAnalyze:
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
                                           root_path=self.output_path,
+                                          fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotMonthStackBarAndCurveForInformation
@@ -701,12 +776,14 @@ class HarvestAnalyze:
 
         self.addFlag = '#### 4. 收获'
 
+        self.fig_type = "harvest"
+
     @property
     @class_func_timer("HarvestAnalyze")
     def Analyze(self):
         """可视化分析"""
-        self.LastMonthCloud(fig_id=9, fig_name='harvest-cloud')
-        self.LastMonthBar(fig_id=10, fig_name='harvest-vbar')
+        self.LastMonthCloud(fig_id=1, fig_name='harvest-cloud')
+        self.LastMonthBar(fig_id=2, fig_name='harvest-vbar')
 
     def LastMonthCloud(self, fig_id, fig_name):
         """画最近1月的收获云图
@@ -719,6 +796,7 @@ class HarvestAnalyze:
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
                                           root_path=self.output_path,
+                                          fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotWordCloudForHarvest
@@ -756,6 +834,7 @@ class HarvestAnalyze:
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
                                           root_path=self.output_path,
+                                          fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotMonthvBar

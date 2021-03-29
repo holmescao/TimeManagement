@@ -94,7 +94,7 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 
 ##### 1.1 计划部分
 
-每个任务的写法为：标签+内容，如`[learn] 学会使用 TimeManagement项目的使用。 100%完成`
+每个任务的写法为：标签+内容，如`[learn] 学会使用 TimeManagement项目的使用。 100%完成 预计1小时`
 
 ```python
 ### 一、计划

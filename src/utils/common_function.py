@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:22:08
 LastEditors: Holmescao
-LastEditTime: 2021-03-26 14:10:03
+LastEditTime: 2021-03-29 12:25:37
 Description: 用于时间管理分析的通用函数
 '''
 import sys
@@ -237,11 +237,11 @@ def LastNdayActivateTime(df, today_dt, back_days):
     return NdayActivateTime
 
 
-def generate_fig_path(date_list, root_path, fig_id, fig_name):
+def generate_fig_path(date_list, root_path, fig_type, fig_id, fig_name):
     startdate = date_list[0].replace("-", "")
     enddate = date_list[-1].replace("-", "")
 
-    fig_save_path = os.path.join(root_path, 'figure/Figure%s' % fig_id)
+    fig_save_path = os.path.join(root_path, f'figure/{enddate}/{fig_type}')
     mkdir(fig_save_path)
     fig_path = fig_save_path + \
         f'/Figure{fig_id}-{fig_name}-{startdate}_{enddate}.png'
@@ -476,3 +476,20 @@ def GetOutputFilePath(today_dt, root_path, suffix='.md'):
     output_file_path = os.path.join(root_path, today_date+suffix)
 
     return output_file_path
+
+
+def DateFormatForCompBar(df):
+    duration_df = df.groupby(by=['taskId'])['duration'].sum()
+    duration = duration_df.values
+
+    predTime_df = df.drop_duplicates(
+        subset='taskId', keep='first', inplace=False)
+    predTime_df.sort_values('taskId', ascending=True, inplace=True)
+    predTime = predTime_df['predTime'].values
+    labels = predTime_df['label'].tolist()
+
+    data = np.zeros((2, len(duration)))
+    data[0, :] = duration[:] / 3600
+    data[1, :] = predTime[:]
+
+    return data, labels

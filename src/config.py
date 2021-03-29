@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-11 21:32:10
 LastEditors: Holmescao
-LastEditTime: 2021-03-26 14:13:10
+LastEditTime: 2021-03-29 10:06:58
 Description: 
 '''
 config = {
@@ -12,7 +12,7 @@ config = {
         "output_path": './output/',
     },
     'data_columns': {
-        "activate": ["date", "startTime", "endTime", "duration", "label"],
+        "activate": ["date", "startTime", "endTime", "duration", "label", "taskId", "predTime"],
         "information": ["date", "quality", "duration", "label"],
         "harvest": ["date", "label_l1", "label_l2"],
     },
