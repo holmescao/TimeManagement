@@ -49,19 +49,18 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 
 - 投入情况
   - 每小时的投入时长（当天）
-  
   - 每时每刻在做什么任务（近7天）
-  
   - 一天之中投入时长的概率分布（近7天）
-  
   - 当日投入总时长（近30天）
   - 各类别任务投入比例（近30天）
-	<center class='half'>
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure1/Figure1-activate-bar-20210326_20210326.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure2\Figure2-activate-brokenbarh-20210320_20210326.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure3\Figure3-activate-waterfall-20210320_20210326.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure4\Figure4-activate-bar-20210225_20210326.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output\figure\Figure5\Figure5-investment-pie-20210225_20210326.png' width="400" height="200"' />
+  - 各任务投入与预测时间对比（当天）
+  <center class='half'>
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure1-activate-bar-20210329_20210329.png' width="250" height="200"' />
+	  <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure2-activate-brokenbarh-20210323_20210329.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure3-activate-waterfall-20210323_20210329.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure4-activate-bar-20210228_20210329.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure5-investment-pie-20210228_20210329.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure6-activate-predict-bar-20210329_20210329.png' width="250" height="200"' />
     </center>
   
 - 信息摄入情况：
@@ -69,9 +68,9 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 高、中、低质量信息摄入时长（当天）
   - 高、中、低质量信息摄入比例、高质量信息占比（近30天）
   <center class='half'>
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure6\Figure6-dayinformation-pie-20210326_20210326.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure7\Figure7-dayinformation-stackbar-20210326_20210326.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure8\Figure8-monthinformation-stackbar-20210225_20210326.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/information/Figure1-dayinformation-pie-20210329_20210329.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/information/Figure2-dayinformation-stackbar-20210329_20210329.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/information/Figure3-monthinformation-stackbar-20210228_20210329.png' width="250" height="200"' />
     </center>
   
 - 收获情况：
@@ -79,8 +78,8 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 各类收获对比、排序（近30天）
 
   <center class='half'>
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure9\Figure9-harvest-cloud-20210225_20210326.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/Figure10\Figure10-harvest-vbar-20210225_20210326.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/harvest/Figure1-harvest-cloud-20210228_20210329.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/harvest/Figure2-harvest-vbar-20210228_20210329.png' width="250" height="200"' />
   </center>
 ## 使用方法
 
