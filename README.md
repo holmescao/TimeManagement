@@ -61,7 +61,7 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure3-activate-waterfall-20210324_20210330.png' width="250" height="200"' />
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure4-activate-bar-20210301_20210330.png' width="250" height="200"' />
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure5-investment-pie-20210301_20210330.png' width="250" height="160"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure6-activate-predict-bar-20210330_20210330.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure6-activate-predict-bar-2020330_20210330.png' width="250" height="200"' />
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure7-activate-calendar-20200331_20210330.png' width="600" height="200"' />
     </center>
   
@@ -80,8 +80,8 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 各类收获概览、统计（近365天）
 
   <center class='half'>
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/harvest/Figure1-harvest-cloud-20210331_20210330.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/harvest/Figure2-harvest-vbar-20210331_20210330.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/harvest/Figure1-harvest-cloud-20200331_20210330.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/harvest/Figure2-harvest-vbar-20200331_20210330.png' width="250" height="200"' />
   </center>
 ## 使用方法
 
