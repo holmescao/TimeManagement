@@ -2,9 +2,9 @@
 Author: Holmescao
 Date: 2021-03-16 12:57:18
 LastEditors: Holmescao
-LastEditTime: 2021-03-29 12:28:51
+LastEditTime: 2021-03-30 20:01:28
 Description: 自动分析schedule文档信息，用于个人时间分析与管理
-RunTime：15 sec
+RunTime：20 sec
 '''
 
 
@@ -65,7 +65,7 @@ if __name__ == '__main__':
                         help='activate data visualization')
     parser.add_argument('--fast', type=bool, default=False,
                         help='use fast version to visualization')
-    parser.add_argument('--today_dt', default=datetime.date.today()-datetime.timedelta(days=1),
+    parser.add_argument('--today_dt', default=datetime.date.today()-datetime.timedelta(days=0),
                         help='today datetime format')
     parser.add_argument('--demo', type=bool, default=False,
                         help='run demo.')

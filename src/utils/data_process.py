@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-13 16:41:06
 LastEditors: Holmescao
-LastEditTime: 2021-03-29 10:46:47
+LastEditTime: 2021-03-30 10:17:44
 Description: schedule数据处理模块，包含对执行信息、信息摄入、收获3种类型信息的处理。
 '''
 
@@ -142,10 +142,13 @@ class Schedule:
 
                 # match label
                 label_re_str = "(\\[).*?(\\])"
-                span = re.search(label_re_str, task_line).span()
-                label_ = task_line[span[0]:span[1]]
+                span_ = re.search(label_re_str, task_line).span()
+                label_ = task_line[span_[0]:span_[1]]
                 span = re.search(r"\w+", label_).span()
                 label = label_[span[0]:span[1]]
+
+                # task id
+                taskId = int(taskId)
 
                 # match predict time
                 try:
@@ -156,12 +159,14 @@ class Schedule:
                 except Exception:
                     predTime = 0
 
-                # task id
-                taskId = int(taskId)
+                # option task
+                option = False
+                if "[可选]" in task_line:
+                    option = True
 
                 # append record
                 datetime_label_pairs.append(
-                    [self.date, startTime, endTime, duration, label, taskId, predTime])
+                    [self.date, startTime, endTime, duration, label, taskId, predTime, option])
 
         return datetime_label_pairs
 

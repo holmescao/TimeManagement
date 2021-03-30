@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:22:08
 LastEditors: Holmescao
-LastEditTime: 2021-03-29 12:25:37
+LastEditTime: 2021-03-30 19:55:34
 Description: 用于时间管理分析的通用函数
 '''
 import sys
@@ -251,7 +251,7 @@ def generate_fig_path(date_list, root_path, fig_type, fig_id, fig_name):
     return fig_abs_path
 
 
-def InsertFigureToFile(fig_path, output_file_path, addFlag):
+def InsertFigureToFile(fig_path, output_file_path, addFlag, zoom=20):
     lines = OpenFile(output_file_path)
 
     try:
@@ -260,7 +260,7 @@ def InsertFigureToFile(fig_path, output_file_path, addFlag):
         InsertIdx = lines.index(addFlag+'\n') + 1
 
     # grammar: figure insert to markdown
-    fig_grammar = f"<img src='{fig_path}' style='zoom:20%;' />\n"
+    fig_grammar = f"<img src='{fig_path}' style='zoom:{zoom}%;' />\n"
     exist_Figure_flag = "<center class='half'>\n"
     end_flag = "</center>\n"
 
@@ -295,7 +295,7 @@ def DataFormatForBrokenBarh(work_states, df, today_dt, back_days):
     data_of_BrokenBarh = []
     data_of_reBrokenBarh = []
     date_list = GetNDayList(today_dt, back_days)
-    for date in date_list:
+    for date in date_list[::-1]:
         idx = df[df['date'].str.contains(date)].index
         if len(idx) > 0:
             # activate
@@ -487,9 +487,10 @@ def DateFormatForCompBar(df):
     predTime_df.sort_values('taskId', ascending=True, inplace=True)
     predTime = predTime_df['predTime'].values
     labels = predTime_df['label'].tolist()
+    option = predTime_df['option'].tolist()
 
     data = np.zeros((2, len(duration)))
     data[0, :] = duration[:] / 3600
     data[1, :] = predTime[:]
 
-    return data, labels
+    return data, labels, option

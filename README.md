@@ -49,14 +49,15 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 
 - 投入情况
   - 每小时的投入时长（当天）
-  - 每时每刻在做什么任务（近7天）
-  - 一天之中投入时长的概率分布（近7天）
-  - 当日投入总时长（近30天）
+  - 24小时任务监控（近7天）
+  - 投入时间段概率分布（近7天）
+  - 每日投入总时长（近30天）
   - 各类别任务投入比例（近30天）
   - 各任务投入与预测时间对比（当天）
+  - 任务执行次数统计（近12个月）
   <center class='half'>
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure1-activate-bar-20210329_20210329.png' width="250" height="200"' />
-	  <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure2-activate-brokenbarh-20210323_20210329.png' width="250" height="200"' />
+	  <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure1-activate-bar-20210329_20210329.png' width="250" height="200"' />
+    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure2-activate-brokenbarh-20210323_20210329.png' width="250" height="200"' />
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure3-activate-waterfall-20210323_20210329.png' width="250" height="200"' />
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure4-activate-bar-20210228_20210329.png' width="250" height="200"' />
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/activate/Figure5-investment-pie-20210228_20210329.png' width="250" height="200"' />
@@ -75,7 +76,7 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   
 - 收获情况：
   
-  - 各类收获对比、排序（近30天）
+  - 各类收获概览、统计（近365天）
 
   <center class='half'>
     <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210329/harvest/Figure1-harvest-cloud-20210228_20210329.png' width="250" height="200"' />

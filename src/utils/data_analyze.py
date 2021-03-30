@@ -2,20 +2,22 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-03-29 12:29:08
+LastEditTime: 2021-03-30 20:10:11
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
-from collections import Counter
-from numpy.lib.function_base import _percentile_dispatcher
+
+from utils import calmap as calmap
+from utils.common_function import *
+
 from wordcloud import WordCloud
+import calendar
 import joypy
 from collections import OrderedDict
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
-from utils.common_function import *
 
 
 mpl.rcParams["font.sans-serif"] = ["LiSu"]
@@ -50,19 +52,20 @@ class Analyze:
     def DataAnalyze(self):
         """数据分析"""
         if self.args.activate:
-            last_day, last_week, last_month = \
+            last_day, last_week, last_month, last_year = \
                 self.GetRecentData(self.sheet_names[0])
             ActivateAnalyze(self.args.fast,
                             self.args.today_dt,
                             last_day,
                             last_week,
                             last_month,
+                            last_year,
                             self.work_states,
                             self.output_path,
                             self.output_file_path).Analyze
 
         if self.args.information:
-            last_day, _, last_month = \
+            last_day, _, last_month, _ = \
                 self.GetRecentData(self.sheet_names[1])
             InformationAnalyze(self.args.today_dt,
                                last_day,
@@ -71,10 +74,10 @@ class Analyze:
                                self.output_file_path).Analyze
 
         if self.args.harvest:
-            _, _, last_month = \
+            _, _, _, last_year = \
                 self.GetRecentData(self.sheet_names[2])
             HarvestAnalyze(self.args.today_dt,
-                           last_month,
+                           last_year,
                            self.output_path,
                            self.output_file_path).Analyze
 
@@ -90,8 +93,9 @@ class Analyze:
         last_day = self.GetLastData(1,  sheet_name)
         last_week = self.GetLastData(7, sheet_name)
         last_month = self.GetLastData(30, sheet_name)
+        last_year = self.GetLastData(365, sheet_name)
 
-        return last_day, last_week, last_month
+        return last_day, last_week, last_month, last_year
 
     def GetLastData(self, back_day, sheet_name, suffix='.xlsx'):
         """从文件夹中提取获取前n天的指定类别数据
@@ -134,7 +138,7 @@ class Analyze:
 
 
 class ActivateAnalyze:
-    def __init__(self, fast, today_dt, last_day, last_week, last_month,
+    def __init__(self, fast, today_dt, last_day, last_week, last_month, last_year,
                  work_states, output_path, output_file_path):
         """初始化
 
@@ -152,6 +156,7 @@ class ActivateAnalyze:
         self.last_day = last_day
         self.last_week = last_week
         self.last_month = last_month
+        self.last_year = last_year
 
         self.work_states = work_states
 
@@ -172,67 +177,7 @@ class ActivateAnalyze:
         self.LastMonthBar(fig_id=4, fig_name='activate-bar')
         self.LastMonthPie(fig_id=5, fig_name='investment-pie')
         self.LastDayCompBar(fig_id=6, fig_name='activate-predict-bar')
-
-    def LastDayCompBar(self, fig_id, fig_name):
-        """画最近1天的每个label的投入与预计时间的对比柱形图
-
-        Args:
-            fig_id ([type]): 图片编号
-            fig_name ([type]): 图片名称
-        """
-        self.compbar, self.labels = DateFormatForCompBar(self.last_day)
-        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 1),
-                                          root_path=self.output_path,
-                                          fig_type=self.fig_type,
-                                          fig_id=fig_id, fig_name=fig_name)
-
-        self.PlotCompBar
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
-
-    @property
-    def PlotCompBar(self):
-        """投入与预计时间的对比柱形图"""
-        fig, ax = plt.subplots(figsize=(8, 6))
-
-        xx = np.arange(self.compbar.shape[1])
-        # bar
-        for x_i in xx:
-            data_i = self.compbar[:, x_i]
-            real, pred = data_i[0], data_i[1]
-            gap = abs(real-pred)
-            if pred >= real:
-                plt.bar(x_i, height=real, label='real',
-                        color=cm.hsv(0.4), alpha=0.8, hatch='/')
-                plt.bar(x_i, height=gap, bottom=real, label='prediction',
-                        color=cm.hsv(0), alpha=0.8, edgecolor=cm.hsv(0))
-
-            else:
-                plt.bar(x_i, height=pred, label='prediction',
-                        color=cm.hsv(0), alpha=0.8, edgecolor=cm.hsv(0))
-                plt.bar(x_i, height=gap, bottom=pred, label='real',
-                        color=cm.hsv(0.4), alpha=0.8, hatch='/')
-
-        # params
-        fontsize = 20
-
-        # drop the redundant of labels via `dict.keys()`
-        handles, labels = plt.gca().get_legend_handles_labels()
-        by_label = OrderedDict(zip(labels, handles))
-        plt.legend(by_label.values(), by_label.keys(),
-                   loc='upper right',
-                   ncol=1, fontsize=fontsize)
-
-        plt.xlabel(u"任务", fontsize=fontsize)
-        plt.ylabel(u"时长(小时)", fontsize=fontsize)
-        plt.xticks(fontsize=fontsize)
-        plt.yticks(fontsize=fontsize)
-
-        task_labels = ['task%d\n%s' % (i+1, self.labels[i]) for i in xx]
-        plt.xticks(ticks=xx, labels=task_labels)
-        plt.title("今日各任务投入与预测时间情况", fontsize=fontsize+5)
-
-        plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
-        plt.close()
+        self.LastYearCalendar(fig_id=7, fig_name='activate-calendar')
 
     def LastDayBar(self, fig_id, fig_name):
         """画最近1天的投入时间柱形图
@@ -272,7 +217,7 @@ class ActivateAnalyze:
         plt.yticks(fontsize=fontsize)
         plt.xticks(ticks=range(24), labels=hours)
         sumhours = sum(self.activate_data) / 3600
-        plt.title("今日学习投入情况 (%.2f 小时)" % sumhours, fontsize=fontsize+5)
+        plt.title("每小时的投入时长 (当天，%.2f 小时)" % sumhours, fontsize=fontsize+5)
 
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
         plt.close()
@@ -328,10 +273,11 @@ class ActivateAnalyze:
         ax.set_xticks(list(range(0, 3600*24+1, 3600*interval)))
         ax.set_xticklabels(list(range(0, 24+1, interval)), fontsize=fontsize-5)
         ax.set_yticks(list(range(1, n_day+1)))
-        ax.set_yticklabels(GetNDayList(self.today_dt, 7), fontsize=fontsize)
+        ax.set_yticklabels(GetNDayList(self.today_dt, 7)
+                           [::-1], fontsize=fontsize)
         plt.xlabel(u"小时", fontsize=fontsize)
-        plt.ylabel(u"日期", fontsize=fontsize)
-        plt.title(u"近一周投入时间", fontsize=fontsize+5)
+        # plt.ylabel(u"日期", fontsize=fontsize)
+        plt.title(u"24小时任务监控（近7天）", fontsize=fontsize+5)
         plt.grid(linestyle="--", alpha=0.15)
 
         # drop the redundant of labels via `dict.keys()`
@@ -391,7 +337,7 @@ class ActivateAnalyze:
         plt.xlabel(u"小时", fontsize=fontsize)
         plt.xticks(ticks=list(range(0, 24, 4))+[24],
                    labels=list(range(0, 24, 4))+[24], fontsize=fontsize)
-        plt.title(u"近一周学习情况", fontsize=fontsize+5)
+        plt.title(u"投入时间段概率分布（近7天）", fontsize=fontsize+5)
         plt.grid(linestyle="--", alpha=0.45)
 
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
@@ -440,7 +386,7 @@ class ActivateAnalyze:
         plt.yticks(fontsize=fontsize)
         plt.xticks(ticks=range(0, 30+1, 4), labels=md_list[::4])
 
-        plt.title("近一个月学习投入情况(平均{0:.2f}小时)".format(avg_hours),
+        plt.title("每日投入总时长(近30天，平均{0:.2f}小时)".format(avg_hours),
                   fontsize=fontsize+5)
 
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
@@ -503,7 +449,7 @@ class ActivateAnalyze:
         fontsize = 20
         list(map(lambda t: t.set_size(fontsize), l_text))
         list(map(lambda t: t.set_size(fontsize), p_text))
-        plt.title(u"近一个月投入时间", fontsize=fontsize+5)
+        plt.title(u"各类别任务投入比例（近30天）", fontsize=fontsize+5)
         plt.text(x=1.8, y=-1.2,
                  s="*others(individual < 10%):\n"+ohter_labels,
                  fontsize=fontsize+5)
@@ -513,9 +459,139 @@ class ActivateAnalyze:
         by_label = OrderedDict(zip(labels, handles))
         plt.legend(by_label.values(), by_label.keys(),
                    bbox_to_anchor=(1.4, 1), loc='upper right',
-                   ncol=1, fontsize=fontsize+5)
+                   ncol=1, fontsize=fontsize)
         plt.axis('equal')
 
+        plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
+        plt.close()
+
+    def LastDayCompBar(self, fig_id, fig_name):
+        """画最近1天的每个label的投入与预计时间的对比柱形图
+
+        Args:
+            fig_id ([type]): 图片编号
+            fig_name ([type]): 图片名称
+        """
+        self.compbar, self.labels, self.option = DateFormatForCompBar(
+            self.last_day)
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 1),
+                                          root_path=self.output_path,
+                                          fig_type=self.fig_type,
+                                          fig_id=fig_id, fig_name=fig_name)
+
+        self.PlotCompBar
+        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+
+    @property
+    def PlotCompBar(self):
+        """投入与预计时间的对比柱形图"""
+        fig, ax = plt.subplots(figsize=(8, 6))
+
+        xx = np.arange(self.compbar.shape[1])
+
+        # color
+        color_pred = 'w'
+        edgecolor_real = 'k'
+        edgecolor_pred = 'k'
+
+        # label
+        label_pred = 'prediction'
+
+        for x_i in xx:
+            data_i = self.compbar[:, x_i]
+            real, pred = data_i[0], data_i[1]
+            gap = abs(real-pred)
+
+            if self.option[x_i]:
+                color_real = 'w'
+                label_real = 'real(optional)'
+            else:
+                color_real = cm.hsv(0.4)
+                label_real = 'real'
+
+            if pred >= real:
+                plt.bar(x_i, height=real, label=label_real,
+                        color=color_real, alpha=0.8, hatch='x', edgecolor=edgecolor_real)
+                plt.bar(x_i, height=gap, bottom=real, label=label_pred,
+                        color=color_pred, alpha=0.5, edgecolor=edgecolor_pred)
+            else:
+                plt.bar(x_i, height=pred, label=label_pred,
+                        color=color_pred, alpha=0.5, edgecolor=edgecolor_pred)
+                plt.bar(x_i, height=gap, bottom=pred, label=label_real,
+                        color=color_real, alpha=0.8, hatch='x', edgecolor=edgecolor_real)
+
+        # params
+        fontsize = 20
+
+        # drop the redundant of labels via `dict.keys()`
+        handles, labels = plt.gca().get_legend_handles_labels()
+        by_label = OrderedDict(zip(labels, handles))
+        plt.legend(by_label.values(), by_label.keys(),
+                   loc='upper right',
+                   ncol=1, fontsize=fontsize)
+
+        plt.xlabel(u"任务", fontsize=fontsize)
+        plt.ylabel(u"时长(小时)", fontsize=fontsize)
+        plt.xticks(fontsize=fontsize)
+        plt.yticks(fontsize=fontsize)
+
+        task_labels = ['task%d\n%s' % (i+1, self.labels[i]) for i in xx]
+        plt.xticks(ticks=xx, labels=task_labels)
+        plt.title("各任务投入与预测时间对比（当天）", fontsize=fontsize+5)
+
+        plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
+        plt.close()
+
+    def LastYearCalendar(self, fig_id, fig_name):
+        """画最近1年的投入时间日历图
+
+        Args:
+            fig_id ([type]): 图片编号
+            fig_name ([type]): 图片名称
+        """
+        df = self.last_year
+        df.date = pd.to_datetime(df.date)
+        index = df.date.tolist()
+        value = np.ones(len(index))
+        self.YearCalendar = pd.Series(value, index=index)
+
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 365),
+                                          root_path=self.output_path,
+                                          fig_type=self.fig_type,
+                                          fig_id=fig_id, fig_name=fig_name)
+
+        self.PlotYearCalendar
+        InsertFigureToFile(
+            self.fig_path, self.output_file_path, self.addFlag, zoom=50)
+
+    @property
+    def PlotYearCalendar(self):
+        """活跃时间柱形图"""
+        fig, ax = plt.subplots(figsize=(8, 6))
+
+        ax, pcm = calmap.yearplot(self.YearCalendar,
+                                  #   vmin=0,
+                                  #   vmax=5,
+                                  year=self.today_dt.year,
+                                  daylabels=calendar.day_abbr[:],
+                                  dayticks=[0, 2, 4, 6],
+                                  monthlabels=calendar.month_abbr[1:],
+                                  monthticks=True,
+                                  #   monthly_border=True,
+                                  border_lw=0.1,
+                                  cmap=cm.Greens,
+                                  label='Less',
+                                  )
+        cbar = fig.colorbar(mappable=pcm, ax=ax,
+                            orientation='horizontal',
+                            shrink=0.25,
+                            fraction=0.15, pad=0.1,
+                            )
+        fontsize = 20
+        plt.text(x=35, y=-4.7, s=u'执行次数', fontsize=fontsize-5)
+
+        # cbar.set_label(u'执行次数', rotation=0, fontsize=fontsize-5)
+        plt.title("任务执行次数统计（近12个月）", fontsize=fontsize-3)
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
         plt.close()
 
@@ -550,7 +626,7 @@ class InformationAnalyze:
     def Analyze(self):
         """可视化分析"""
         self.LastDayPie(fig_id=1, fig_name='dayinformation-pie')
-        self.LastDayStackBar(fig_id=2, fig_name='dayinformation-stackbar')
+        self.LastDayBar(fig_id=2, fig_name='dayinformation-stackbar')
         self.LastMonthStackBar(fig_id=3, fig_name='monthinformation-stackbar')
 
     def LastDayPie(self, fig_id, fig_name):
@@ -591,7 +667,7 @@ class InformationAnalyze:
         fontsize = 20
         list(map(lambda t: t.set_size(fontsize), l_text))
         list(map(lambda t: t.set_size(fontsize), p_text))
-        plt.title(u"今日信息摄入质量情况", fontsize=fontsize+5)
+        plt.title(u"信息摄入质量比例（当天）", fontsize=fontsize+5)
 
         # drop the redundant of labels via `dict.keys()`
         handles, labels = plt.gca().get_legend_handles_labels()
@@ -604,8 +680,8 @@ class InformationAnalyze:
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
         plt.close()
 
-    def LastDayStackBar(self, fig_id, fig_name):
-        """画最近1天的信息摄入柱形堆叠图
+    def LastDayBar(self, fig_id, fig_name):
+        """画最近1天的信息摄入质量柱形图
 
         Args:
             fig_id ([type]): 图片编号
@@ -618,12 +694,12 @@ class InformationAnalyze:
                                           fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
-        self.PlotStackBarForInformation
+        self.PlotBarForInformation
         InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
 
     @property
-    def PlotStackBarForInformation(self):
-        """信息柱形堆叠图"""
+    def PlotBarForInformation(self):
+        """信息摄入质量柱形图"""
         quality_list = self.stacked_bar_data.quality.values
         columns = list(self.stacked_bar_data.columns)
         columns.remove('quality')
@@ -662,7 +738,7 @@ class InformationAnalyze:
         plt.xticks(fontsize=fontsize)
         plt.yticks(fontsize=fontsize)
         plt.ylim([0, max(csum)*1.2])
-        plt.title("今日信息摄入情况", fontsize=fontsize+5)
+        plt.title("信息摄入时长（当天）", fontsize=fontsize+5)
 
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
         plt.close()
@@ -725,7 +801,7 @@ class InformationAnalyze:
         res_sum = np.sum(stacked_bar_data, axis=1)
         res_sum[res_sum == 0] = 1e-7
         high_rate = stacked_bar_data[:, 0] / res_sum
-        ax1.plot(np.arange(len(date_list)), high_rate,
+        ax1.plot(np.arange(len(date_list)), high_rate*100,
                  color='red', label='rate of high',
                  marker='o', markersize=5)
 
@@ -736,7 +812,7 @@ class InformationAnalyze:
             tick.set_rotation(30)
         fig.legend(loc="upper right", bbox_to_anchor=(
             1, 1), bbox_transform=ax.transAxes, fontsize=fontsize)
-        plt.title(u"近一个月信息摄入情况", fontsize=fontsize+5)
+        plt.title(u"信息摄入总体情况（近30天）", fontsize=fontsize+5)
         plt.grid(linestyle='--', alpha=0.9)
 
         ax.set_label(columns)
@@ -750,14 +826,14 @@ class InformationAnalyze:
         ax1.set_label("high rate")
         ax1.tick_params(labelsize=fontsize)
         ax1.set_ylabel("%", fontsize=fontsize)
-        ax1.set_ylim([0, 1.2])
+        ax1.set_ylim([0, 120])
 
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
         plt.close()
 
 
 class HarvestAnalyze:
-    def __init__(self, today_dt, last_month,
+    def __init__(self, today_dt, last_year,
                  output_path, output_file_path):
         """初始化
 
@@ -767,9 +843,9 @@ class HarvestAnalyze:
             output_file_path ([type]): 数据分析结果待插入图片到文件的路径
         """
         self.today_dt = today_dt
-        assert len(last_month) > 0, \
-            "最近一个月的收获还没填写！请先在文档填写，或把`harvest`参数值设为False"
-        self.last_month = last_month
+        assert len(last_year) > 0, \
+            "最近一年的收获还没填写！请先在文档填写，或把`harvest`参数值设为False"
+        self.last_year = last_year
 
         self.output_path = output_path
         self.output_file_path = output_file_path
@@ -792,15 +868,16 @@ class HarvestAnalyze:
             fig_id ([type]): 图片编号
             fig_name ([type]): 图片名称
         """
-        self.word_list = MergeWord(self.last_month)
+        self.word_list = MergeWord(self.last_year)
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 365),
                                           root_path=self.output_path,
                                           fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotWordCloudForHarvest
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(
+            self.fig_path, self.output_file_path, self.addFlag, zoom=30)
 
     @property
     def PlotWordCloudForHarvest(self):
@@ -818,7 +895,7 @@ class HarvestAnalyze:
 
         # params
         fontsize = 30
-        plt.title(u"近一个月收获情况", fontsize=fontsize)
+        plt.title(u"收获概览（近1年）", fontsize=fontsize)
 
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
         plt.close()
@@ -830,15 +907,16 @@ class HarvestAnalyze:
             fig_id ([type]): 图片编号
             fig_name ([type]): 图片名称
         """
-        self.word_list = MergeWord(self.last_month)
+        self.word_list = MergeWord(self.last_year)
 
-        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 30),
+        self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 365),
                                           root_path=self.output_path,
                                           fig_type=self.fig_type,
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotMonthvBar
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(
+            self.fig_path, self.output_file_path, self.addFlag, zoom=30)
 
     @property
     def PlotMonthvBar(self):
@@ -862,7 +940,7 @@ class HarvestAnalyze:
         ax.set_yticklabels(label, fontsize=fontsize)
         plt.xticks(fontsize=fontsize)
         plt.xlabel("次数", fontsize=fontsize)
-        plt.title(u"近一个月收获情况", fontsize=2*fontsize)
+        plt.title(u"收获统计（近1年）", fontsize=2*fontsize)
 
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
         plt.close()
