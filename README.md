@@ -62,7 +62,13 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 任务执行次数统计（近12个月）
 
 <center class='half'>
-  <img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200407.png' width="250" height="200"' /><img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200342.png' width="250" height="200"' /><img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200343.png' width="250" height="200"' /><img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200344.png' width="250" height="200"' /><img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200345.png' width="250" height="160"' /><img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200346.png' width="250" height="200"' /><img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200347.png' width="600" height="200"' />    
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200407.png' width="250" height="200"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200342.png' width="250" height="200"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200343.png' width="250" height="200"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200344.png' width="250" height="200"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200345.png' width="250" height="160"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200346.png' width="250" height="200"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200347.png' width="600" height="200"' />    
 </center>
 
 
@@ -73,8 +79,9 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   
   
 <center class="half">
-  <img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure1-dayinformation-pie-20210331_20210331.png' width="250" height="200"' />
-  <img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure2-dayinformation-stackbar-20210331_20210331.png' width="250" height="200"' />                                                   <img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure3-monthinformation-stackbar-20210302_20210331.png' width="250" height="200"' />      
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure1-dayinformation-pie-20210331_20210331.png' width="250" height="200"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure2-dayinformation-stackbar-20210331_20210331.png' width="250" height="200"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure3-monthinformation-stackbar-20210302_20210331.png' width="250" height="200"' />      
 </center>
 
 
@@ -84,8 +91,8 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 各类收获概览、统计（近365天）
 
 <center class="half">
-  <img src="https://gitee.com/holmescao/figure-bed/raw/master/Figure1-harvest-cloud-20200401_20210331.png" alt="Figure1-harvest-cloud-20200401_20210331" style="zoom:30%;" />
-  <img src="https://gitee.com/holmescao/figure-bed/raw/master/Figure2-harvest-vbar-20200401_20210331.png" alt="Figure2-harvest-vbar-20200401_20210331" style="zoom:30%;" />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure1-harvest-cloud-20200401_20210331.png' width="250" height="200"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure2-harvest-vbar-20200401_20210331.png' width="250" height="200"' />  
 </center>
 
 
