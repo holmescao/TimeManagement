@@ -62,9 +62,9 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 任务执行次数统计（近12个月）
 
 <center class='half'>
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200407.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200342.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200343.png' width="250" height="200"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200407.png' width="100"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200342.png' width="100"' />
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200343.png' width="100"' />
 	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200344.png' width="250" height="200"' />
 	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200345.png' width="250" height="160"' />
 	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200346.png' width="250" height="200"' />
