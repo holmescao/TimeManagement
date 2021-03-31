@@ -77,10 +77,10 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   
   
 <center class="half">
-  <img src="https://gitee.com/holmescao/figure-bed/raw/master/Figure1-dayinformation-pie-20210331_20210331.png" alt="Figure1-dayinformation-pie-20210331_20210331" style="zoom:25%;" />
-  <img src="https://gitee.com/holmescao/figure-bed/raw/master/Figure2-dayinformation-stackbar-20210331_20210331.png" alt="Figure2-dayinformation-stackbar-20210331_20210331" style="zoom:25%;" />
-  <img src="https://gitee.com/holmescao/figure-bed/raw/master/Figure3-monthinformation-stackbar-20210302_20210331.png" alt="Figure3-monthinformation-stackbar-20210302_20210331" style="zoom:25%;" />
+  <img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure1-dayinformation-pie-20210331_20210331.png' width="250" height="200"' />
+  <img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure2-dayinformation-stackbar-20210331_20210331.png' width="250" height="200"' />                                                   <img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure3-monthinformation-stackbar-20210302_20210331.png' width="250" height="200"' />      
 </center>
+
 
 
 - 收获情况：
