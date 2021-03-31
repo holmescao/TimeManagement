@@ -68,7 +68,7 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200344.png' width="250" height="200"' />
 	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200345.png' width="250" height="160"' />
 	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200346.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200347.png' width="600" height="200"' />    
+	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200347.png' width="650" height="200"' />    
 </center>
 
 
