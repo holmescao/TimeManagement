@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:22:08
 LastEditors: Holmescao
-LastEditTime: 2021-03-30 19:55:34
+LastEditTime: 2021-03-31 11:30:14
 Description: 用于时间管理分析的通用函数
 '''
 import sys

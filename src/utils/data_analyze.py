@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-03-30 20:10:11
+LastEditTime: 2021-03-31 12:40:53
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
@@ -46,6 +46,7 @@ class Analyze:
         mkdir(input_path)
         mkdir(output_path)
 
+        self.schedule_date = "# xxxx年xx月xx日Schedule\n"
         self.sheet_names = ['activate', 'information', 'harvest']
 
     @property
@@ -80,6 +81,19 @@ class Analyze:
                            last_year,
                            self.output_path,
                            self.output_file_path).Analyze
+
+        lines = OpenFile(self.output_file_path)
+        try:
+            idx = lines.index(self.schedule_date)
+
+            year = str(self.args.today_dt.year).zfill(4)
+            month = str(self.args.today_dt.month).zfill(2)
+            day = str(self.args.today_dt.day).zfill(2)
+            lines[idx] = f"# {year}年{month}月{day}日Schedule\n"
+            with open(self.output_file_path, mode='w', encoding='utf-8')as fp:
+                fp.writelines(lines)
+        except Exception:
+            pass
 
     def GetRecentData(self, sheet_name):
         """获取最近1~30天的数据
@@ -562,7 +576,7 @@ class ActivateAnalyze:
 
         self.PlotYearCalendar
         InsertFigureToFile(
-            self.fig_path, self.output_file_path, self.addFlag, zoom=50)
+            self.fig_path, self.output_file_path, self.addFlag, zoom=60)
 
     @property
     def PlotYearCalendar(self):

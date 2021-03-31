@@ -179,10 +179,10 @@ def yearplot(
     by_day = by_day[str(year)]
 
     # Add missing days.
-    today = datetime.date.today()  # TODO：self.today_dt
+    today = datetime.date.today()
     year, month = today.year, today.month
     _, monthCountDay = calendar.monthrange(year, month)
-    lastDay = datetime.date(year, month, day=monthCountDay)
+    lastDay = datetime.date(year, month, day=monthCountDay)+datetime.timedelta(days=1)
     startDay = datetime.date(year-1, month % 12+1, day=1)
 
     by_day = by_day.reindex(

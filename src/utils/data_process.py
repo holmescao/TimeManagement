@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-13 16:41:06
 LastEditors: Holmescao
-LastEditTime: 2021-03-30 10:17:44
+LastEditTime: 2021-03-31 11:21:25
 Description: schedule数据处理模块，包含对执行信息、信息摄入、收获3种类型信息的处理。
 '''
 
@@ -93,31 +93,29 @@ class Schedule:
 
         return activate
 
-    def GetDateTimeAndLabelPair(self, startIdx, endIdx,
-                                planlabelFlag='. ', carrylabelFlag='@', timeSep='to'):
+    def GetDateTimeAndLabelPair(self, startIdx, endIdx):
         """获取文本中的时间和标签
 
         Args:
             startIdx ([type]): 起始索引
             endIdx ([type]): 结束索引
-            planlabelFlag (str, optional): [description]. Defaults to '. '.
-            carrylabelFlag (str, optional): [description]. Defaults to '@'.
-            timeSep (str, optional): [description]. Defaults to 'to'.
 
         Returns:
             [list]: 时间和标签对
         """
         datetime_label_pairs = []
         for idx in range(startIdx, endIdx):
-            line = self.context[idx]
-            if timeSep in line:
+            line = self.context[idx].replace(" ", "")
+            record = r"\|\d{1,2}\|\d{1,2}:\d{1,2}:\d{1,2}\|\d{1,2}:\d{1,2}:\d{1,2}\|"
+            m = re.search(record, line)
+            if m is not None:
                 # find time period
                 time_re_str = r"\d{1,2}:\d{1,2}:\d{1,2}"
                 time_regex = re.compile(time_re_str)
                 time_period = time_regex.findall(line)
 
                 # change strptime format
-                assert len(time_period) == 2, "必须在`执行`中输入`开始`、`结束`的时间段"
+                assert len(time_period) == 2, "必须在`执行`中输入`开始时刻`、`结束时刻`的时间对"
                 startTime = datetime.datetime.strptime(
                     self.date+" "+time_period[0], "%Y-%m-%d %H:%M:%S")
                 endTime = datetime.datetime.strptime(
@@ -126,43 +124,36 @@ class Schedule:
                 # duration
                 duration = (endTime - startTime).seconds
 
-                #  location label idx
-                labelFlagIdx = line.find(carrylabelFlag)
-                taskId = line[:labelFlagIdx]
+                #  location task idx
+                task_re_str = r'\d{1,2}'
+                m = re.search(task_re_str, line)
+                try:
+                    taskId = m.group(0)
+                except Exception:
+                    print("请在`执行`表格中输入任务序号")
+                    sys.exit()
                 carryIdx = self.context.index(self.scheduleFlag) + 1
                 findtask = False
                 while not findtask:
-                    if taskId+planlabelFlag in self.context[carryIdx]:
-                        taskIdx = carryIdx
+                    schedule_task_re_str = '\|(.*)%s(.*)\|' % taskId
+                    m = re.search(schedule_task_re_str, self.context[carryIdx])
+                    if m is not None:
+                        taskLoc = carryIdx
                         findtask = True
                     else:
                         carryIdx += 1
 
-                task_line = self.context[taskIdx]
+                task_line = self.context[taskLoc].replace(" ", "")
 
-                # match label
-                label_re_str = "(\\[).*?(\\])"
-                span_ = re.search(label_re_str, task_line).span()
-                label_ = task_line[span_[0]:span_[1]]
-                span = re.search(r"\w+", label_).span()
-                label = label_[span[0]:span[1]]
+                # split elements
+                plan_list = task_line.strip("\n").split("|")[1:-1]
+                label = plan_list[1]
+                predTime = plan_list[4]
+                optional = plan_list[5]
 
-                # task id
                 taskId = int(taskId)
-
-                # match predict time
-                try:
-                    predTime_re_str = "预计(.*)小时"
-                    span = re.search(predTime_re_str, task_line).span()
-                    predTime_ = task_line[span[0]:span[1]]
-                    predTime = float(re.findall(r"\d+\.?\d*", predTime_)[0])
-                except Exception:
-                    predTime = 0
-
-                # option task
-                option = False
-                if "[可选]" in task_line:
-                    option = True
+                predTime = float(predTime) if len(predTime) > 0 else 0
+                option = True if "可选" in optional else False
 
                 # append record
                 datetime_label_pairs.append(
@@ -196,16 +187,14 @@ class Schedule:
         """
         information_quality_pairs = []
         for idx in range(Idx, len(self.context)):
-            line = self.context[idx]
-            try:
-                # extract columns
-                re_str = r"[hml]-(.*)-\d{1,4}"
-                m = re.search(re_str, line)
-                string = m.group(0)
-                str_list = string.split("-")
+            line = self.context[idx].replace(" ", "")
+            re_str = r"\|[hml]\|"
+            m = re.search(re_str, line)
+            if m is not None:
+                record_list = line.strip("\n").split("|")[1:-1]
 
                 # append record
-                quality = str_list[0]
+                quality = record_list[0]
                 assert quality in 'hml', u"信息质量填写有误，只能是'h','m','l'"
 
                 if quality == 'h':
@@ -215,12 +204,10 @@ class Schedule:
                 elif quality == 'l':
                     quality = 'low'
 
-                label = str_list[1]
-                duration = int(str_list[2])
+                label = record_list[1]
+                duration = int(record_list[2])
                 information_quality_pairs.append(
                     [self.date, quality, duration, label])
-            except AttributeError:
-                continue
 
         return information_quality_pairs
 
@@ -231,7 +218,7 @@ class Schedule:
         Returns:
             [type]: harvest类别信息
         """
-        Idx = GetFlagIdx(self.context, self.reviewFlag)
+        Idx = GetFlagIdx(self.context, "#### 4. 收获\n")
         harvest_label = self.GetDateHarvest(Idx)
 
         harvest = pd.DataFrame(harvest_label,
@@ -250,27 +237,14 @@ class Schedule:
         """
         harvest = []
         for idx in range(Idx, len(self.context)):
-            line = self.context[idx]
-            try:
-                # extract harvest string
-                re_str = "- (.*).(.*) \\[(.*)\\]"
-                m = re.search(re_str, line)
-                string = m.group(0)
-                # del link
-                link_idx = string.index('[')
-                string = string[:link_idx]
-
-                # extract label
-                label_str = "\w{1,100}"
-                regex = re.compile(label_str)
-                label_list = regex.findall(string)
-
-                # append record
+            line = self.context[idx].replace(" ", "")
+            re_str = r"\|([a-zA-Z_]){1,100}\|([a-zA-Z_]){1,100}\|"
+            m = re.search(re_str, line)
+            if m is not None:
+                label_list = line.strip("\n").split("|")[1:-1]
                 label1 = label_list[0]
                 label2 = label_list[1]
-                harvest.append([self.date, label1, label2])
 
-            except AttributeError:
-                continue
+                harvest.append([self.date, label1, label2])
 
         return harvest
