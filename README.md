@@ -19,7 +19,6 @@
   - [依赖](#依赖)
     - [1.软件](#1软件)
     - [2. python第三方库](#2-python第三方库)
-  - [TODO](#todo)
 # TimeManagement
 
 ## 前言
@@ -61,34 +60,39 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 各类别任务投入比例（近30天）
   - 各任务投入与预测时间对比（当天）
   - 任务执行次数统计（近12个月）
-  <center class='half'>
-	  <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure1-activate-bar-20210330_20210330.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure2-activate-brokenbarh-20210324_20210330.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure3-activate-waterfall-20210324_20210330.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure4-activate-bar-20210301_20210330.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure5-investment-pie-20210301_20210330.png' width="250" height="160"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure6-activate-predict-bar-20210330_20210330.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/activate/Figure7-activate-calendar-20200331_20210330.png' width="600" height="200"' />
-    </center>
-  
+
+<center class='half'>
+  <img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200407.png' width="250" height="200"' />
+  <img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200342.png' width="250" height="200"' />                
+  <img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200343.png' width="250" height="200"' />                
+  <img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200344.png' width="250" height="200"' />    
+  <img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200345.png' width="250" height="160"' />    
+  <img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200346.png' width="250" height="200"' />    
+  <img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200347.png' width="600" height="200"' />    
+</center>
 - 信息摄入情况：
   - 高、中、低质量信息摄入比例（当天）
   - 高、中、低质量信息摄入时长（当天）
   - 高、中、低质量信息摄入比例、高质量信息占比（近30天）
-  <center class='half'>
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/information/Figure1-dayinformation-pie-20210330_20210330.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/information/Figure2-dayinformation-stackbar-20210330_20210330.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/information/Figure3-monthinformation-stackbar-20210301_20210330.png' width="250" height="200"' />
-    </center>
   
+  
+<center class="half">
+  <img src="https://gitee.com/holmescao/figure-bed/raw/master/Figure1-dayinformation-pie-20210331_20210331.png" alt="Figure1-dayinformation-pie-20210331_20210331" style="zoom:25%;" />
+  <img src="https://gitee.com/holmescao/figure-bed/raw/master/Figure2-dayinformation-stackbar-20210331_20210331.png" alt="Figure2-dayinformation-stackbar-20210331_20210331" style="zoom:25%;" />
+  <img src="https://gitee.com/holmescao/figure-bed/raw/master/Figure3-monthinformation-stackbar-20210302_20210331.png" alt="Figure3-monthinformation-stackbar-20210302_20210331" style="zoom:25%;" />
+</center>
+
+
 - 收获情况：
   
   - 各类收获概览、统计（近365天）
 
-  <center class='half'>
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/harvest/Figure1-harvest-cloud-20200331_20210330.png' width="250" height="200"' />
-    <img src='https://github.com/holmescao/TimeManagement/blob/main/src/demo/output/figure/20210330/harvest/Figure2-harvest-vbar-20200331_20210330.png' width="250" height="200"' />
-  </center>
+<center class="half">
+  <img src="https://gitee.com/holmescao/figure-bed/raw/master/Figure1-harvest-cloud-20200401_20210331.png" alt="Figure1-harvest-cloud-20200401_20210331" style="zoom:30%;" />
+  <img src="https://gitee.com/holmescao/figure-bed/raw/master/Figure2-harvest-vbar-20200401_20210331.png" alt="Figure2-harvest-vbar-20200401_20210331" style="zoom:30%;" />
+</center>
+
+
 ## 使用方法
 
 ### 极速演示版
