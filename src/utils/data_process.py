@@ -1,8 +1,8 @@
 '''
 Author: Holmescao
 Date: 2021-03-13 16:41:06
-LastEditors: Holmescao
-LastEditTime: 2021-03-31 11:21:25
+LastEditors: Please set LastEditors
+LastEditTime: 2021-03-31 20:43:54
 Description: schedule数据处理模块，包含对执行信息、信息摄入、收获3种类型信息的处理。
 '''
 
@@ -153,7 +153,7 @@ class Schedule:
 
                 taskId = int(taskId)
                 predTime = float(predTime) if len(predTime) > 0 else 0
-                option = True if "可选" in optional else False
+                option = True if "是" in optional else False
 
                 # append record
                 datetime_label_pairs.append(
