@@ -1,8 +1,8 @@
 '''
 Author: Holmescao
 Date: 2021-03-13 16:41:06
-LastEditors: Please set LastEditors
-LastEditTime: 2021-03-31 20:43:54
+LastEditors: Holmescao
+LastEditTime: 2021-04-01 10:03:28
 Description: schedule数据处理模块，包含对执行信息、信息摄入、收获3种类型信息的处理。
 '''
 
@@ -135,8 +135,10 @@ class Schedule:
                 carryIdx = self.context.index(self.scheduleFlag) + 1
                 findtask = False
                 while not findtask:
-                    schedule_task_re_str = '\|(.*)%s(.*)\|' % taskId
-                    m = re.search(schedule_task_re_str, self.context[carryIdx])
+                    schedule_task_re_str = r'\|%s\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|' % taskId
+                    string = self.context[carryIdx].replace(
+                        " ", "").strip("\n")
+                    m = re.search(schedule_task_re_str, string)
                     if m is not None:
                         taskLoc = carryIdx
                         findtask = True

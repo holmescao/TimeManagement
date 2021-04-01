@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:22:08
 LastEditors: Holmescao
-LastEditTime: 2021-03-31 11:30:14
+LastEditTime: 2021-04-01 11:52:28
 Description: 用于时间管理分析的通用函数
 '''
 import sys
@@ -251,7 +251,7 @@ def generate_fig_path(date_list, root_path, fig_type, fig_id, fig_name):
     return fig_abs_path
 
 
-def InsertFigureToFile(fig_path, output_file_path, addFlag, zoom=20):
+def InsertFigureToFile(fig_path, output_file_path, addFlag, zoom=20, width=230):
     lines = OpenFile(output_file_path)
 
     try:
@@ -260,7 +260,8 @@ def InsertFigureToFile(fig_path, output_file_path, addFlag, zoom=20):
         InsertIdx = lines.index(addFlag+'\n') + 1
 
     # grammar: figure insert to markdown
-    fig_grammar = f"<img src='{fig_path}' style='zoom:{zoom}%;' />\n"
+    # fig_grammar = f"<img src='{fig_path}' style='zoom:{zoom}%;' />\n"
+    fig_grammar = f"<img src='{fig_path}' width='{width};' />\n"
     exist_Figure_flag = "<center class='half'>\n"
     end_flag = "</center>\n"
 
@@ -494,3 +495,46 @@ def DateFormatForCompBar(df):
     data[1, :] = predTime[:]
 
     return data, labels, option
+
+
+def Datetime2Daytime(ymd_hms):
+    hour = ymd_hms.hour
+    minute = ymd_hms.minute
+    second = ymd_hms.second
+
+    return hour * 3600 + minute * 60 + second
+
+
+def DataFormatForTomato(df):
+    tomato_time = 60 * 25
+    df['tomato_num'] = df['duration'].apply(
+        lambda x: min(int(x/tomato_time), 4))
+
+    date_list = sorted(list(df.date.value_counts().index))
+    date_repeat = []
+    for d in date_list:
+        d_df = df[df.date == d]
+        need_relax = False
+        for i in range(len(d_df)):
+            if not need_relax:
+                # exceed 4 tomato time, you need relax least 5 min.
+                if d_df['duration'].iloc[i] >= 4 * tomato_time:
+                    need_relax = True
+            else:
+                # relax less 5 min, will not add score.
+                relax_time = Datetime2Daytime(d_df['startTime'].iloc[i]) - \
+                    Datetime2Daytime(d_df['endTime'].iloc[i-1])
+                if relax_time < 5 * 60:
+                    d_df['tomato_num'].iloc[i] = 0
+                else:
+                    need_relax = False
+        score = d_df.tomato_num.sum()
+        date_repeat += [d] * score
+
+    new_df = pd.DataFrame(None, columns=['date'])
+    new_df.date = pd.to_datetime(date_repeat)
+    index = new_df.date.tolist()
+    value = np.ones(len(index))
+    YearCalendar = pd.Series(value, index=index)
+
+    return YearCalendar

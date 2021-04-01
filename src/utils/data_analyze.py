@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-03-31 12:40:53
+LastEditTime: 2021-04-01 11:53:56
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
@@ -185,12 +185,12 @@ class ActivateAnalyze:
     @class_func_timer("ActivateAnalyze")
     def Analyze(self):
         """可视化分析"""
-        self.LastDayBar(fig_id=1, fig_name='activate-bar')
-        self.LastWeekBroenBarh(fig_id=2, fig_name='activate-brokenbarh')
-        self.LastWeekWaterfall(fig_id=3, fig_name='activate-waterfall')
-        self.LastMonthBar(fig_id=4, fig_name='activate-bar')
-        self.LastMonthPie(fig_id=5, fig_name='investment-pie')
-        self.LastDayCompBar(fig_id=6, fig_name='activate-predict-bar')
+        # self.LastDayBar(fig_id=1, fig_name='activate-bar')
+        # self.LastWeekWaterfall(fig_id=2, fig_name='activate-waterfall')
+        # self.LastMonthBar(fig_id=3, fig_name='activate-bar')
+        # self.LastMonthPie(fig_id=4, fig_name='investment-pie')
+        # self.LastWeekBroenBarh(fig_id=5, fig_name='activate-brokenbarh')
+        # self.LastDayCompBar(fig_id=6, fig_name='activate-predict-bar')
         self.LastYearCalendar(fig_id=7, fig_name='activate-calendar')
 
     def LastDayBar(self, fig_id, fig_name):
@@ -428,7 +428,7 @@ class ActivateAnalyze:
 
     @property
     def PlotPie(self):
-        """活跃时间饼图"""
+        """各类别任务投入比例饼图"""
         fig, ax = plt.subplots(figsize=(8, 6))
 
         data, otherdata, mergeIdx, splitIdx = \
@@ -465,7 +465,7 @@ class ActivateAnalyze:
         list(map(lambda t: t.set_size(fontsize), p_text))
         plt.title(u"各类别任务投入比例（近30天）", fontsize=fontsize+5)
         plt.text(x=1.8, y=-1.2,
-                 s="*others(individual < 10%):\n"+ohter_labels,
+                 s="*others(< 10%):\n"+ohter_labels,
                  fontsize=fontsize+5)
 
         # drop the redundant of labels via `dict.keys()`
@@ -511,6 +511,11 @@ class ActivateAnalyze:
         # label
         label_pred = 'prediction'
 
+        width = 0.8
+
+        fontsize = 20
+
+        offset = 1.5
         for x_i in xx:
             data_i = self.compbar[:, x_i]
             real, pred = data_i[0], data_i[1]
@@ -523,20 +528,23 @@ class ActivateAnalyze:
                 color_real = cm.hsv(0.4)
                 label_real = 'real'
 
+            x = x_i * offset
             if pred >= real:
-                plt.bar(x_i, height=real, label=label_real,
+                plt.bar(x, height=real, label=label_real, width=width,
                         color=color_real, alpha=0.8, hatch='x', edgecolor=edgecolor_real)
-                plt.bar(x_i, height=gap, bottom=real, label=label_pred,
+                plt.bar(x, height=gap, bottom=real, label=label_pred, width=width,
                         color=color_pred, alpha=0.5, edgecolor=edgecolor_pred)
             else:
-                plt.bar(x_i, height=pred, label=label_pred,
+                plt.bar(x, height=pred, label=label_pred, width=width,
                         color=color_pred, alpha=0.5, edgecolor=edgecolor_pred)
-                plt.bar(x_i, height=gap, bottom=pred, label=label_real,
+                plt.bar(x, height=gap, bottom=pred, label=label_real, width=width,
                         color=color_real, alpha=0.8, hatch='x', edgecolor=edgecolor_real)
 
-        # params
-        fontsize = 20
+            y_i = max(pred, real)
+            plt.text(x, y_i+0.05, s=self.labels[x_i],
+                     ha='center', va='bottom', fontsize=fontsize-5)
 
+        # params
         # drop the redundant of labels via `dict.keys()`
         handles, labels = plt.gca().get_legend_handles_labels()
         by_label = OrderedDict(zip(labels, handles))
@@ -544,13 +552,15 @@ class ActivateAnalyze:
                    loc='upper right',
                    ncol=1, fontsize=fontsize)
 
+        vmax = self.compbar.max()
+        plt.ylim([0, vmax+1.8])
         plt.xlabel(u"任务", fontsize=fontsize)
         plt.ylabel(u"时长(小时)", fontsize=fontsize)
         plt.xticks(fontsize=fontsize)
         plt.yticks(fontsize=fontsize)
 
-        task_labels = ['task%d\n%s' % (i+1, self.labels[i]) for i in xx]
-        plt.xticks(ticks=xx, labels=task_labels)
+        task_labels = ['task%d' % (i+1) for i in xx]
+        plt.xticks(ticks=xx*offset, labels=task_labels)
         plt.title("各任务投入与预测时间对比（当天）", fontsize=fontsize+5)
 
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
@@ -563,11 +573,7 @@ class ActivateAnalyze:
             fig_id ([type]): 图片编号
             fig_name ([type]): 图片名称
         """
-        df = self.last_year
-        df.date = pd.to_datetime(df.date)
-        index = df.date.tolist()
-        value = np.ones(len(index))
-        self.YearCalendar = pd.Series(value, index=index)
+        self.YearCalendar = DataFormatForTomato(self.last_year)
 
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 365),
                                           root_path=self.output_path,
@@ -576,7 +582,7 @@ class ActivateAnalyze:
 
         self.PlotYearCalendar
         InsertFigureToFile(
-            self.fig_path, self.output_file_path, self.addFlag, zoom=60)
+            self.fig_path, self.output_file_path, self.addFlag, width=500)
 
     @property
     def PlotYearCalendar(self):
@@ -594,18 +600,17 @@ class ActivateAnalyze:
                                   #   monthly_border=True,
                                   border_lw=0.1,
                                   cmap=cm.Greens,
-                                  label='Less',
                                   )
         cbar = fig.colorbar(mappable=pcm, ax=ax,
                             orientation='horizontal',
-                            shrink=0.25,
+                            shrink=0.3,
                             fraction=0.15, pad=0.1,
                             )
         fontsize = 20
-        plt.text(x=35, y=-4.7, s=u'执行次数', fontsize=fontsize-5)
+        plt.text(x=35, y=-4.7, s=u'有效专注次数', fontsize=fontsize-5)
 
         # cbar.set_label(u'执行次数', rotation=0, fontsize=fontsize-5)
-        plt.title("任务执行次数统计（近12个月）", fontsize=fontsize-3)
+        plt.title(u"效率统计（近12个月）", fontsize=fontsize-3)
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
         plt.close()
 
@@ -891,7 +896,7 @@ class HarvestAnalyze:
 
         self.PlotWordCloudForHarvest
         InsertFigureToFile(
-            self.fig_path, self.output_file_path, self.addFlag, zoom=30)
+            self.fig_path, self.output_file_path, self.addFlag, width=300)
 
     @property
     def PlotWordCloudForHarvest(self):
@@ -930,7 +935,7 @@ class HarvestAnalyze:
 
         self.PlotMonthvBar
         InsertFigureToFile(
-            self.fig_path, self.output_file_path, self.addFlag, zoom=30)
+            self.fig_path, self.output_file_path, self.addFlag, width=300)
 
     @property
     def PlotMonthvBar(self):
