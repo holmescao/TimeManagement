@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-04-01 11:53:56
+LastEditTime: 2021-04-01 12:01:50
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
@@ -185,12 +185,12 @@ class ActivateAnalyze:
     @class_func_timer("ActivateAnalyze")
     def Analyze(self):
         """可视化分析"""
-        # self.LastDayBar(fig_id=1, fig_name='activate-bar')
-        # self.LastWeekWaterfall(fig_id=2, fig_name='activate-waterfall')
-        # self.LastMonthBar(fig_id=3, fig_name='activate-bar')
-        # self.LastMonthPie(fig_id=4, fig_name='investment-pie')
-        # self.LastWeekBroenBarh(fig_id=5, fig_name='activate-brokenbarh')
-        # self.LastDayCompBar(fig_id=6, fig_name='activate-predict-bar')
+        self.LastDayBar(fig_id=1, fig_name='activate-bar')
+        self.LastWeekWaterfall(fig_id=2, fig_name='activate-waterfall')
+        self.LastMonthBar(fig_id=3, fig_name='activate-bar')
+        self.LastMonthPie(fig_id=4, fig_name='investment-pie')
+        self.LastWeekBroenBarh(fig_id=5, fig_name='activate-brokenbarh')
+        self.LastDayCompBar(fig_id=6, fig_name='activate-predict-bar')
         self.LastYearCalendar(fig_id=7, fig_name='activate-calendar')
 
     def LastDayBar(self, fig_id, fig_name):
