@@ -35,6 +35,14 @@ https://zhuanlan.zhihu.com/p/361721046
 
 **https://blog.csdn.net/qq_35670367/article/details/115381741**
 
+
+
+采用markdown记录+程序分析的方式：在表格内计划、记录今日情况，运行程序可自动生成可视化分析图片到markdown文档的指定位置，整体效果如下图所示：
+
+![](https://gitee.com/holmescao/figure-bed/raw/master/20210402232554.jpg)
+
+
+
 欢迎大家提出改进意见~
 
 ## 简介​​
