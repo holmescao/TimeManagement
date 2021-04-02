@@ -29,7 +29,11 @@
 
 基于本人长年累月的实践经验，设计并开发了该项目，旨在为更多的人提供标准化的<u>***高效、可量化、可复盘***</u>的时间管理、复盘工作流，助你成为时间管理大师！
 
-**本人针对该项目的时间管理复盘分析的思考总结，可见博客：https://blog.csdn.net/qq_35670367/article/details/115381741**
+**本人针对该项目的时间管理复盘分析的思考总结，可见博客：**
+
+https://zhuanlan.zhihu.com/p/361721046
+
+**https://blog.csdn.net/qq_35670367/article/details/115381741**
 
 欢迎大家提出改进意见~
 
@@ -63,15 +67,8 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 各任务投入与预测时间对比（当天）
   - 任务执行次数统计（近12个月）
 
-<center class='half'>
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200407.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200342.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200343.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200344.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200345.png' width="250" height="160"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200346.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/20210331200347.png' width="650" height="200"' />    
-</center>
+<img src="https://gitee.com/holmescao/figure-bed/raw/master/20210402232154.png" alt="image-20210402232145677" style="zoom:80%;" />
+
 
 
 - 信息摄入情况：
@@ -80,11 +77,9 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 高、中、低质量信息摄入比例、高质量信息占比（近30天）
   
   
-<center class="half">
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure1-dayinformation-pie-20210331_20210331.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure2-dayinformation-stackbar-20210331_20210331.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure3-monthinformation-stackbar-20210302_20210331.png' width="250" height="200"' />      
-</center>
+
+<img src="https://gitee.com/holmescao/figure-bed/raw/master/20210402232228.png" alt="image-20210402232228703" style="zoom: 80%;" />
+
 
 
 
@@ -92,10 +87,8 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   
   - 各类收获概览、统计（近365天）
 
-<center class="half">
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure1-harvest-cloud-20200401_20210331.png' width="250" height="200"' />
-	<img src='https://gitee.com/holmescao/figure-bed/raw/master/Figure2-harvest-vbar-20200401_20210331.png' width="250" height="200"' />  
-</center>
+![image-20210402232259717](https://gitee.com/holmescao/figure-bed/raw/master/20210402232259.png)
+
 
 
 ## 使用方法
