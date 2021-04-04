@@ -37,19 +37,21 @@ https://zhuanlan.zhihu.com/p/361721046
 
 
 
-采用markdown记录+程序分析的方式：在表格内计划、记录今日情况，运行程序可自动生成可视化分析图片到markdown文档的指定位置，整体效果如下图所示：
-
-![](https://gitee.com/holmescao/figure-bed/raw/master/20210402232554.jpg)
-
-
-
 欢迎大家提出改进意见~
 
 ## 简介​​
 
-本项目针对个人每日规划和执行情况，提供了记录文本模板（基于`typora`的markdown文件），基于markdown里的内容，通过运行脚本进行数据处理，并提供多维度可视化分析。此外，分析结果会自动插入到每日计划的markdown文件中。
+本项目针对个人每日规划和执行情况，提供了一个`计划+执行+记录+可视化复盘`的**workflow**，项目中包括了记录文本模板（基于`typora`的markdown文件），基于markdown里的内容，通过运行脚本进行数据处理，并提供多维度可视化分析。此外，分析结果会自动插入到每日计划的markdown文件中。**workflow**如下图所示：
 
-tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysis.py --demo True`，即可在`'./demo/schedule/'`下得到可视化分析后的示例markdown文档。
+<img src="https://gitee.com/holmescao/figure-bed/raw/master/20210404115005.png" style="zoom:30%;" />
+
+
+
+tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysis.py --demo True`，即可在`'./demo/schedule/'`下得到可视化分析后的示例markdown文档，如下图所示：
+
+![](https://gitee.com/holmescao/figure-bed/raw/master/20210402232554.jpg)
+
+
 
 ## 功能
 
@@ -62,7 +64,7 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 
 ### 2. 多维度可视化分析：
 
-**程序会根据你在markdown的记录内容，自动分析你最近的投入（学习/工作）情况。**
+**程序会根据你在markdown的记录内容，自动分析你最近的投入（学习/工作）、信息摄入、收获情况。**
 
 可视化维度如下：
 
@@ -89,15 +91,11 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 <img src="https://gitee.com/holmescao/figure-bed/raw/master/20210402232228.png" alt="image-20210402232228703" style="zoom: 80%;" />
 
 
-
-
 - 收获情况：
   
   - 各类收获概览、统计（近365天）
 
 ![image-20210402232259717](https://gitee.com/holmescao/figure-bed/raw/master/20210402232259.png)
-
-
 
 ## 使用方法
 
