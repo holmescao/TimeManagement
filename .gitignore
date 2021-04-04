@@ -6,3 +6,4 @@ singlefile.py
 src/tmp/*
 src/schedule/*
 src/output/*
+workflow/*

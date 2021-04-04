@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-04-01 23:00:48
+LastEditTime: 2021-04-04 23:08:02
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
@@ -732,9 +732,6 @@ class InformationAnalyze:
         val = stacked_bar_data[:, 0]
         p1 = plt.bar(np.arange(len(quality_list)), val,
                      width=0.5, color=colors[0], tick_label=quality_list)
-        sub_matrix = stacked_bar_data[:, 0:1]
-        csum = np.cumsum(sub_matrix, axis=1)[:, -1]
-        csum = csum.flatten()
 
         for i in range(1, len(columns)):
             sub_matrix = stacked_bar_data[:, 0:i]
@@ -756,7 +753,7 @@ class InformationAnalyze:
         plt.ylabel(u"时长(分钟)", fontsize=fontsize)
         plt.xticks(fontsize=fontsize)
         plt.yticks(fontsize=fontsize)
-        plt.ylim([0, max(csum)*1.2])
+        plt.ylim([0, max(csum)*1.5])
         plt.title("信息摄入时长（当天）", fontsize=fontsize+5)
 
         plt.savefig(self.fig_path, dpi=150, bbox_inches='tight')
@@ -778,7 +775,8 @@ class InformationAnalyze:
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotMonthStackBarAndCurveForInformation
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(
+            self.fig_path, self.output_file_path, self.addFlag, width=270)
 
     @property
     def PlotMonthStackBarAndCurveForInformation(self):
@@ -828,9 +826,9 @@ class InformationAnalyze:
         fontsize = 20
         plt.xlabel(u"日期", fontsize=fontsize)
         for tick in ax.get_xticklabels():
-            tick.set_rotation(30)
+            tick.set_rotation(0)
         fig.legend(loc="upper right", bbox_to_anchor=(
-            1, 1), bbox_transform=ax.transAxes, fontsize=fontsize)
+            0.9, -0.12), ncol=2, bbox_transform=ax.transAxes, fontsize=fontsize)
         plt.title(u"信息摄入总体情况（近30天）", fontsize=fontsize+5)
         plt.grid(linestyle='--', alpha=0.9)
 
@@ -839,8 +837,8 @@ class InformationAnalyze:
         ax.set_ylabel(u"时长(分钟)", fontsize=fontsize)
         ax.set_ylim([0, max(csum)*1.2])
         md_list = list(map(ymd2md, date_list))
-        ax.set_xticks(range(0, 30, 4))
-        ax.set_xticklabels(md_list[::4])
+        ax.set_xticks(range(0, 30, 7))
+        ax.set_xticklabels(md_list[::7])
 
         ax1.set_label("high rate")
         ax1.tick_params(labelsize=fontsize)
