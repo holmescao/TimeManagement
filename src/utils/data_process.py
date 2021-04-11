@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-13 16:41:06
 LastEditors: Holmescao
-LastEditTime: 2021-04-01 10:03:28
+LastEditTime: 2021-04-11 14:14:39
 Description: schedule数据处理模块，包含对执行信息、信息摄入、收获3种类型信息的处理。
 '''
 
@@ -42,8 +42,8 @@ class Schedule:
     def HandleDailySchedule(self):
         """处理每日schedule文件
         """
-        files_path = GetFilePath(self.root_path)
-        pre_files_path = GetFilePath(self.tmp_path)
+        files_path = GetFilePath(self.root_path, suffix='.md')
+        pre_files_path = GetFilePath(self.tmp_path, suffix='.xlsx')
 
         self.ExtractandSaveSchedule(files_path, pre_files_path)
 

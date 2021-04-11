@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:22:08
 LastEditors: Holmescao
-LastEditTime: 2021-04-04 22:38:54
+LastEditTime: 2021-04-11 15:11:01
 Description: 用于时间管理分析的通用函数
 '''
 import sys
@@ -92,7 +92,7 @@ def GetFlagIdx(context, flag):
     return context.index(flag)
 
 
-def GetFilePath(root_path):
+def GetFilePath(root_path, suffix='.md'):
     """获取路径下所有文件
 
     Args:
@@ -104,8 +104,9 @@ def GetFilePath(root_path):
     files_path = []
     for root, _, files in os.walk(root_path):
         for file in files:
-            file_path = os.path.join(root, file)
-            files_path.append(file_path)
+            if file.endswith(suffix):
+                file_path = os.path.join(root, file)
+                files_path.append(file_path)
 
     return sorted(files_path)
 
@@ -314,6 +315,8 @@ def DataFormatForBrokenBarh(work_states, df, today_dt, back_days):
             # head
             if current_date_data[0][0] > 0:
                 tuple_of_reBrokenBarh = [(0, current_date_data[0][0]-1)]
+            else:
+                tuple_of_reBrokenBarh = []
 
             for i in range(len(current_date_data)-1):
                 i_end = current_date_data[i][0] + current_date_data[i][1]
