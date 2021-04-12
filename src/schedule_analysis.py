@@ -2,9 +2,9 @@
 Author: Holmescao
 Date: 2021-03-16 12:57:18
 LastEditors: Holmescao
-LastEditTime: 2021-04-11 15:11:45
+LastEditTime: 2021-04-12 16:24:00
 Description: 自动分析schedule文档信息，用于个人时间分析与管理
-RunTime：20 sec
+RunTime：9 sec
 '''
 
 
@@ -34,6 +34,7 @@ def DemoSetting(args, config):
     args.harvest = True
     args.fast = False
     args.today_dt = datetime.date.today()
+    args.fig_cloud = False
 
     config['path']['root_path'] = './demo/schedule/'
     config['path']['tmp_path'] = './demo/tmp/'
@@ -63,14 +64,17 @@ if __name__ == '__main__':
                         help='activate data visualization')
     parser.add_argument('--harvest', type=bool, default=True,
                         help='activate data visualization')
-    parser.add_argument('--fast', type=bool, default=False,
+    parser.add_argument('--fast', type=bool, default=True,
                         help='use fast version to visualization')
     parser.add_argument('--today_dt', default=datetime.date.today()-datetime.timedelta(days=0),
                         help='today datetime format')
+    parser.add_argument('--fig_cloud', default=False,
+                        help='upload figure to cloud')
     parser.add_argument('--demo', type=bool, default=False,
                         help='run demo.')
     args = parser.parse_args()
 
+    # demo情况下，默认不将图片传到云
     if args.demo:
         args, config = DemoSetting(args, config)
 
@@ -84,5 +88,8 @@ if __name__ == '__main__':
                       work_states=config['work_states'],
                       input_path=config['path']['tmp_path'],
                       output_path=config['path']['output_path'],
-                      output_file_path=GetOutputFilePath(args.today_dt, root_path=config['path']['root_path']))
+                      output_file_path=GetOutputFilePath(
+                          args.today_dt, root_path=config['path']['root_path']),
+                      cloud_root_path=config['path']['cloud_root_path'])
     analyze.DataAnalyze
+    analyze.StatisticCarryTime

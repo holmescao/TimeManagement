@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:22:08
 LastEditors: Holmescao
-LastEditTime: 2021-04-11 15:11:01
+LastEditTime: 2021-04-12 14:46:29
 Description: 用于时间管理分析的通用函数
 '''
 import sys
@@ -30,7 +30,6 @@ def class_func_timer(class_name):
                                                                             name=function.__name__))
             t0 = time.time()
             result = function(*args, **kwargs)
-            function(*args, **kwargs)
             t1 = time.time()
             print('[Class: {class_name}, Function: {name} finished, spent time: {time:.2f}s]'.format(class_name=class_name,
                                                                                                      name=function.__name__, time=t1 - t0))
@@ -252,7 +251,8 @@ def generate_fig_path(date_list, root_path, fig_type, fig_id, fig_name):
     return fig_abs_path
 
 
-def InsertFigureToFile(fig_path, output_file_path, addFlag, zoom=20, width=230):
+def InsertFigureToFile(fig_cloud, cloud_root_path,
+                       fig_path, output_file_path, addFlag, width=230):
     lines = OpenFile(output_file_path)
 
     try:
@@ -260,8 +260,17 @@ def InsertFigureToFile(fig_path, output_file_path, addFlag, zoom=20, width=230):
     except Exception:
         InsertIdx = lines.index(addFlag+'\n') + 1
 
+    # upload to cloud
+    fig_ori_name = fig_path.replace("\\", "/").split("/")[-1]
+    if fig_cloud:
+        print(f'uploading {fig_path} to cloud')
+        sys_res = os.popen(f'picgo upload {fig_path}').read()
+        assert "PicGo SUCCESS" in sys_res, "上传到云失败！"
+
+        fig_real_name = sys_res.split("img/")[-1].strip("\n")
+        fig_path = cloud_root_path + fig_real_name
+
     # grammar: figure insert to markdown
-    # fig_grammar = f"<img src='{fig_path}' style='zoom:{zoom}%;' />\n"
     fig_grammar = f"<img src='{fig_path}' width='{width};' />\n"
     exist_Figure_flag = "<center class='half'>\n"
     end_flag = "</center>\n"
@@ -272,7 +281,8 @@ def InsertFigureToFile(fig_path, output_file_path, addFlag, zoom=20, width=230):
         lines.insert(InsertIdx + 2, end_flag)
     else:
         # avoid redunant insert
-        if fig_grammar not in lines:
+        lines_str = '@'.join(lines)
+        if fig_ori_name not in lines_str:
             find = False
             while not find:
                 if end_flag in lines[InsertIdx]:
@@ -282,8 +292,17 @@ def InsertFigureToFile(fig_path, output_file_path, addFlag, zoom=20, width=230):
 
             lines.insert(InsertIdx, fig_grammar)
         else:
-            InsertIdx = lines.index(fig_grammar)
-            lines[InsertIdx] = fig_grammar
+            # locate that old figure
+            find = False
+            while not find:
+                if fig_ori_name in lines[InsertIdx]:
+                    find = True
+                else:
+                    InsertIdx += 1
+            del lines[InsertIdx]  # remove that old figure
+
+            # insert new
+            lines.insert(InsertIdx, fig_grammar)
 
     # insert
     with open(output_file_path, mode='w', encoding='utf-8')as fp:
@@ -485,6 +504,7 @@ def GetOutputFilePath(today_dt, root_path, suffix='.md'):
 def DateFormatForCompBar(df):
     duration_df = df.groupby(by=['taskId'])['duration'].sum()
     duration = duration_df.values
+    taskId = list(duration_df.index)
 
     predTime_df = df.drop_duplicates(
         subset='taskId', keep='first', inplace=False)
@@ -497,7 +517,7 @@ def DateFormatForCompBar(df):
     data[0, :] = duration[:] / 3600
     data[1, :] = predTime[:]
 
-    return data, labels, option
+    return taskId, data, labels, option
 
 
 def Datetime2Daytime(ymd_hms):

@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:17:04
 LastEditors: Holmescao
-LastEditTime: 2021-04-04 23:08:02
+LastEditTime: 2021-04-12 16:24:44
 Description: 通过可视化分析时间管理情况，并自动将分析结果插入到相应文件中。
 '''
 
@@ -27,7 +27,9 @@ mpl.rcParams["axes.unicode_minus"] = False
 class Analyze:
     """可视化分析模块"""
 
-    def __init__(self, args, work_states, input_path, output_path, output_file_path):
+    def __init__(self, args, work_states,
+                 input_path, output_path,
+                 output_file_path, cloud_root_path):
         """初始化
 
         Args:
@@ -36,6 +38,8 @@ class Analyze:
             input_path ([type]): 待分析数据的路径
             output_path ([type]): 数据分析结果在本项目的保存路径
             output_file_path ([type]): 数据分析结果待插入图片到文件的路径
+            cloud_root_path ([type]): 图片云存储路径
+
         """
         self.args = args
         self.work_states = work_states
@@ -48,6 +52,9 @@ class Analyze:
 
         self.schedule_date = "# xxxx年xx月xx日Schedule\n"
         self.sheet_names = ['activate', 'information', 'harvest']
+
+        self.fig_cloud = args.fig_cloud
+        self.cloud_root_path = cloud_root_path
 
     @property
     def DataAnalyze(self):
@@ -63,7 +70,9 @@ class Analyze:
                             last_year,
                             self.work_states,
                             self.output_path,
-                            self.output_file_path).Analyze
+                            self.output_file_path,
+                            self.fig_cloud,
+                            self.cloud_root_path).Analyze
 
         if self.args.information:
             last_day, _, last_month, _ = \
@@ -72,7 +81,9 @@ class Analyze:
                                last_day,
                                last_month,
                                self.output_path,
-                               self.output_file_path).Analyze
+                               self.output_file_path,
+                               self.fig_cloud,
+                               self.cloud_root_path).Analyze
 
         if self.args.harvest:
             _, _, _, last_year = \
@@ -80,8 +91,11 @@ class Analyze:
             HarvestAnalyze(self.args.today_dt,
                            last_year,
                            self.output_path,
-                           self.output_file_path).Analyze
+                           self.output_file_path,
+                           self.fig_cloud,
+                           self.cloud_root_path).Analyze
 
+        # 自动修改模板标题的日期
         lines = OpenFile(self.output_file_path)
         try:
             idx = lines.index(self.schedule_date)
@@ -94,6 +108,75 @@ class Analyze:
                 fp.writelines(lines)
         except Exception:
             pass
+
+    @property
+    def StatisticCarryTime(self):
+        """统计并填充每个任务的实际时长"""
+
+        addFlag = '### 一、计划'
+        insertflag = "实际时长（小时）"
+        tableFlag_reg = r"\|[-]{1,}\|"
+
+        # 获取每个任务的执行时长
+        last_day, _, _, _ = self.GetRecentData(self.sheet_names[0])
+        taskId, compbar, _, _ = DateFormatForCompBar(last_day)
+        realDuration = compbar[0, :]
+
+        # 定位到相关位置
+        ori_lines = OpenFile(self.output_file_path)
+        try:
+            InsertIdx = ori_lines.index(addFlag) + 1
+        except Exception:
+            InsertIdx = ori_lines.index(addFlag+'\n') + 1
+        lines = ori_lines[InsertIdx:]
+
+        i_line = 0
+        while True:
+            try:
+                string = lines[i_line].replace(" ", "").replace("\t", "")
+                re.match(tableFlag_reg, string).group()
+                break
+            except AttributeError:
+                i_line += 1
+
+        startIdx = i_line+1
+        # 计算实际时长所在列
+        colIdx = i_line - 1
+        insert_idx = lines[colIdx].index(insertflag)
+        col_th = lines[colIdx][:insert_idx].count("|")
+
+        task_i = 1
+        real_j = 0
+        line_Idx = startIdx
+        record_reg = r"\|(.*)\|\n"
+        while True:
+            line = lines[line_Idx]
+            try:
+                # 判断是否还在table
+                string = line.replace(" ", "").replace("\t", "")
+                re.match(record_reg, string).group()
+
+                # 分割成list
+                l_list = line.replace(" ", "").replace(
+                    "\t", "").strip("\n").split("|")[1:-1]
+                # 填充
+                if task_i == taskId[real_j]:
+                    l_list[col_th-1] = "%.2f" % realDuration[real_j]
+                    # 替换原来的位置
+                    ori_lines[line_Idx+InsertIdx] = "|" + \
+                        '|'.join(l_list)+"|\n"
+                    real_j += 1
+                    if real_j >= len(taskId):
+                        break
+
+                line_Idx += 1
+                task_i += 1
+
+            except AttributeError:
+                break
+
+        with open(self.output_file_path, mode='w', encoding='utf-8')as fp:
+            fp.writelines(ori_lines)
 
     def GetRecentData(self, sheet_name):
         """获取最近1~30天的数据
@@ -153,7 +236,7 @@ class Analyze:
 
 class ActivateAnalyze:
     def __init__(self, fast, today_dt, last_day, last_week, last_month, last_year,
-                 work_states, output_path, output_file_path):
+                 work_states, output_path, output_file_path, fig_cloud, cloud_root_path=""):
         """初始化
 
         Args:
@@ -163,6 +246,8 @@ class ActivateAnalyze:
             work_states ([type]): 工作状态类别
             output_path ([type]): 数据分析结果在本项目的保存路径
             output_file_path ([type]): 数据分析结果待插入图片到文件的路径
+            fig_cloud ([type]): 是否上传图片到云
+            cloud_root_path ([type]): 云存储路径
         """
         self.fast = fast
         self.today_dt = today_dt
@@ -176,6 +261,9 @@ class ActivateAnalyze:
 
         self.output_path = output_path
         self.output_file_path = output_file_path
+
+        self.fig_cloud = fig_cloud
+        self.cloud_root_path = cloud_root_path
 
         self.addFlag = '#### 2. 学习情况'
 
@@ -210,7 +298,8 @@ class ActivateAnalyze:
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotDayBar
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag)
 
     @property
     def PlotDayBar(self):
@@ -253,7 +342,8 @@ class ActivateAnalyze:
                                           fig_name=fig_name)
 
         self.PlotBrokenBarh
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag)
 
     @property
     def PlotBrokenBarh(self):
@@ -323,7 +413,8 @@ class ActivateAnalyze:
 
         # 7.14sec
         self.PlotWaterFall
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag)
 
     @property
     def PlotWaterFall(self):
@@ -374,7 +465,8 @@ class ActivateAnalyze:
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotMonthBar
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag)
 
     @property
     def PlotMonthBar(self):
@@ -424,7 +516,8 @@ class ActivateAnalyze:
                                           fig_id=fig_id,
                                           fig_name=fig_name)
         self.PlotPie
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag)
 
     @property
     def PlotPie(self):
@@ -486,7 +579,7 @@ class ActivateAnalyze:
             fig_id ([type]): 图片编号
             fig_name ([type]): 图片名称
         """
-        self.compbar, self.labels, self.option = DateFormatForCompBar(
+        self.taskId, self.compbar, self.labels, self.option = DateFormatForCompBar(
             self.last_day)
         self.fig_path = generate_fig_path(date_list=GetNDayList(self.today_dt, 1),
                                           root_path=self.output_path,
@@ -494,7 +587,8 @@ class ActivateAnalyze:
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotCompBar
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag)
 
     @property
     def PlotCompBar(self):
@@ -502,17 +596,13 @@ class ActivateAnalyze:
         fig, ax = plt.subplots(figsize=(8, 6))
 
         xx = np.arange(self.compbar.shape[1])
-
         # color
         color_pred = 'w'
         edgecolor_real = 'k'
         edgecolor_pred = 'k'
-
         # label
         label_pred = 'prediction'
-
         width = 0.8
-
         fontsize = 20
 
         offset = 1.5
@@ -540,8 +630,7 @@ class ActivateAnalyze:
                 plt.bar(x, height=gap, bottom=pred, label=label_real, width=width,
                         color=color_real, alpha=0.8, hatch='x', edgecolor=edgecolor_real)
 
-            y_i = max(pred, real)
-            plt.text(x, y_i+0.05, s=self.labels[x_i],
+            plt.text(x, max(pred, real)+0.05, s=self.labels[x_i],
                      ha='center', va='bottom', fontsize=fontsize-5)
 
         # params
@@ -559,7 +648,7 @@ class ActivateAnalyze:
         plt.xticks(fontsize=fontsize)
         plt.yticks(fontsize=fontsize)
 
-        task_labels = ['task%d' % (i+1) for i in xx]
+        task_labels = ['task%d' % self.taskId[i] for i in xx]
         plt.xticks(ticks=xx*offset, labels=task_labels)
         plt.title("各任务投入与预测时间对比（当天）", fontsize=fontsize+5)
 
@@ -581,8 +670,8 @@ class ActivateAnalyze:
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotYearCalendar
-        InsertFigureToFile(
-            self.fig_path, self.output_file_path, self.addFlag, width=500)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag, width=500)
 
     @property
     def PlotYearCalendar(self):
@@ -617,7 +706,7 @@ class ActivateAnalyze:
 
 class InformationAnalyze:
     def __init__(self, today_dt, last_day, last_month,
-                 output_path, output_file_path):
+                 output_path, output_file_path, fig_cloud, cloud_root_path):
         """初始化
 
         Args:
@@ -626,6 +715,8 @@ class InformationAnalyze:
             last_month ([type]): 最近30天的数据
             output_path ([type]): 数据分析结果在本项目的保存路径
             output_file_path ([type]): 数据分析结果待插入图片到文件的路径
+            fig_cloud ([type]): 是否上传图片到云
+            cloud_root_path ([type]): 云存储路径
         """
         self.today_dt = today_dt
         assert len(last_day) > 0, \
@@ -636,6 +727,8 @@ class InformationAnalyze:
         self.output_path = output_path
         self.output_file_path = output_file_path
 
+        self.fig_cloud = fig_cloud
+        self.cloud_root_path = cloud_root_path
         self.addFlag = '#### 3. 信息摄入'
 
         self.fig_type = "information"
@@ -662,7 +755,8 @@ class InformationAnalyze:
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotPieForInformation
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag)
 
     @property
     def PlotPieForInformation(self):
@@ -714,7 +808,8 @@ class InformationAnalyze:
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotBarForInformation
-        InsertFigureToFile(self.fig_path, self.output_file_path, self.addFlag)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag)
 
     @property
     def PlotBarForInformation(self):
@@ -775,8 +870,8 @@ class InformationAnalyze:
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotMonthStackBarAndCurveForInformation
-        InsertFigureToFile(
-            self.fig_path, self.output_file_path, self.addFlag, width=270)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag, width=270)
 
     @property
     def PlotMonthStackBarAndCurveForInformation(self):
@@ -851,13 +946,15 @@ class InformationAnalyze:
 
 class HarvestAnalyze:
     def __init__(self, today_dt, last_year,
-                 output_path, output_file_path):
+                 output_path, output_file_path, fig_cloud, cloud_root_path):
         """初始化
 
         Args:
             last_month ([type]): 最近30天的数据
             output_path ([type]): 数据分析结果在本项目的保存路径
             output_file_path ([type]): 数据分析结果待插入图片到文件的路径
+            fig_cloud ([type]): 是否上传图片到云
+            cloud_root_path ([type]): 云存储路径
         """
         self.today_dt = today_dt
         assert len(last_year) > 0, \
@@ -866,6 +963,9 @@ class HarvestAnalyze:
 
         self.output_path = output_path
         self.output_file_path = output_file_path
+
+        self.fig_cloud = fig_cloud
+        self.cloud_root_path = cloud_root_path
 
         self.addFlag = '#### 4. 收获'
 
@@ -893,15 +993,16 @@ class HarvestAnalyze:
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotWordCloudForHarvest
-        InsertFigureToFile(
-            self.fig_path, self.output_file_path, self.addFlag, width=300)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag, width=300)
 
     @property
     def PlotWordCloudForHarvest(self):
         """收获云图"""
         text_cut = ' '.join(self.word_list)
 
-        word_cloud = WordCloud(font_path="simsun.ttc",
+        word_cloud = WordCloud(scale=8,
+                               font_path="simsun.ttc",
                                background_color="white",
                                max_font_size=40)
         word_cloud.generate(text_cut)
@@ -932,8 +1033,8 @@ class HarvestAnalyze:
                                           fig_id=fig_id, fig_name=fig_name)
 
         self.PlotMonthvBar
-        InsertFigureToFile(
-            self.fig_path, self.output_file_path, self.addFlag, width=300)
+        InsertFigureToFile(self.fig_cloud, self.cloud_root_path,
+                           self.fig_path, self.output_file_path, self.addFlag, width=300)
 
     @property
     def PlotMonthvBar(self):
