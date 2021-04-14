@@ -43,7 +43,7 @@ https://zhuanlan.zhihu.com/p/361721046
 
 ## 简介​​
 
-本项目针对个人每日规划和执行情况，提供了一个`计划+执行+记录+可视化复盘`的**workflow**，项目中包括了记录文本模板（基于`typora`的markdown文件），基于markdown里的内容，通过运行脚本进行数据处理，并提供多维度可视化分析。此外，分析结果会自动插入到每日计划的markdown文件中，其中可视化的结果还可以选择上传到云，以供你随时随地打开markdown节课查看图片。**workflow**如下图所示：
+本项目针对个人每日规划和执行情况，提供了一个`计划+执行+记录+可视化复盘`的**workflow**，项目中包括了记录文本模板（基于`typora`的markdown文件），基于markdown里的内容，通过运行脚本进行数据处理，可在几秒内提供多维度可视化分析。此外，分析结果会自动插入到每日计划的markdown文件中，其中可视化的结果还可以选择上传到云，以供你随时随地打开markdown都可查看图片。**workflow**如下图所示：
 
 <img src="https://gitee.com/holmescao/figure-bed/raw/master/20210404115005.png" style="zoom:30%;" />
 
