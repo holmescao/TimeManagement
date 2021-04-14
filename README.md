@@ -43,7 +43,7 @@ https://zhuanlan.zhihu.com/p/361721046
 
 ## 简介​​
 
-本项目针对个人每日规划和执行情况，提供了一个`计划+执行+记录+可视化复盘`的**workflow**，项目中包括了记录文本模板（基于`typora`的markdown文件），基于markdown里的内容，通过运行脚本进行数据处理，并提供多维度可视化分析。此外，分析结果会自动插入到每日计划的markdown文件中。**workflow**如下图所示：
+本项目针对个人每日规划和执行情况，提供了一个`计划+执行+记录+可视化复盘`的**workflow**，项目中包括了记录文本模板（基于`typora`的markdown文件），基于markdown里的内容，通过运行脚本进行数据处理，并提供多维度可视化分析。此外，分析结果会自动插入到每日计划的markdown文件中，其中可视化的结果还可以选择上传到云，以供你随时随地打开markdown节课查看图片。**workflow**如下图所示：
 
 <img src="https://gitee.com/holmescao/figure-bed/raw/master/20210404115005.png" style="zoom:30%;" />
 
@@ -51,9 +51,9 @@ https://zhuanlan.zhihu.com/p/361721046
 
 tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysis.py --demo True`，即可在`'./demo/schedule/'`下得到可视化分析后的示例markdown文档，如下图所示：
 
-![](https://gitee.com/holmescao/figure-bed/raw/master/20210402232554.jpg)
-
-
+<center class="half">
+    <img src="https://gitee.com/holmescao/figure-bed/raw/master/20210414212936.png" style="zoom:70%;" />
+</center>
 
 ## 功能
 
@@ -113,16 +113,16 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 
 你需要在如下表格中填写当天的每项计划任务的信息。
 
-除了`extra`任务标签外，其余的任务每一列均要填写内容
+除了`extra`任务标签外，其余的任务每一列均要填写内容（最后一列`实际时长（小时）`会根据执行部分自动计算并填充）
 
 可选任务标签：['learn', paper', 'write', 'think', 'code', 'survey', 'material', 'discussion', 'meeting', 'extra']
 
-| 任务序号 | 任务标签 | 任务描述                         | 预计完成率（%） | 预计时长（小时） | 是否可选 |
-| -------- | -------- | -------------------------------- | --------------- | ---------------- | -------- |
-| 1        | learn    | 学会使用TimeManagement项目的使用 | 100             | 1                | 否       |
-| 2        | extra    | 临时额外因素                     |                 |                  | 否       |
-| 3        | think    | 复盘                             | 100             | 0.4              | 是       |
-|          |          |                                  |                 |                  |          |
+| 任务序号 | 任务标签 | 任务描述                         | 预计完成率（%） | 预计时长（小时） | 是否可选 | 实际时长（小时） |
+| -------- | -------- | -------------------------------- | --------------- | ---------------- | -------- | ---------------- |
+| 1        | learn    | 学会使用TimeManagement项目的使用 | 100             | 1                | 否       |                  |
+| 2        | extra    | 临时额外因素                     |                 |                  | 否       |                  |
+| 3        | think    | 复盘                             | 100             | 0.4              | 是       |                  |
+|          |          |                                  |                 |                  |          |                  |
 
 *注：`extra`的临时额外因素是为了记录每天突发的需求，这不属于计划范围，所以不考虑完成率和时长。*
 
@@ -179,10 +179,14 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
   - 在`schedule_analysis.py`程序中，设置参数`activate\infomation\harvest`，来选择需要分析的内容。默认是都分析
 - 设定要分析的日期
   - 在`schedule_analysis.py`程序中，设置参数`today_dt`，来决定分析哪天的内容。默认为当天
+- 选择是否将图片上传到云服务器（放在云的图片可以让你实现随地打开都可显示，否则只能你运行的设备上可以查看图片）
+  - 在在`schedule_analysis.py`程序中，设置参数`fig_cloud`，来决定是否将图片上传到云。默认为不上传。若要上传，则首次上传前需要如下步骤：
+    - 下载、配置`PicGo`，选定一个图床，比如`Gitee`（还没有自己图床的可以参考：[PicGo相关配置流程](https://8d4b1130.wiz06.com/wapp/pages/view/share/s/2diN4M0n917G2t5rDb1YqQeg0rAC1v1RPkUW23_eq232Bep_)；我自己踩过坑，把真正有用的流程整理了出来，按这走完流程应该没问题）
+    - 在`config.py`文件中修改`config.path.cloud_root_path`，是你存放图片的云路径（根据你选择的图床而定）
 
 ##### 2.2 运行程序
 
-- 运行`schedule_analysis.py`，等待20秒内即可获得所有分析结果。分析结果会自动插入到markdown文件中，并会备份存在`./output/figure/`目录下。
+- 运行`schedule_analysis.py`，等待10秒内即可获得所有分析结果。分析结果会自动插入到markdown文件中，并会备份在`./output/figure/`目录下，也会上传到图床。
 
 ## 依赖
 

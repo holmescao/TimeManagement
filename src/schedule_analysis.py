@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 12:57:18
 LastEditors: Holmescao
-LastEditTime: 2021-04-12 16:24:00
+LastEditTime: 2021-04-14 21:31:24
 Description: 自动分析schedule文档信息，用于个人时间分析与管理
 RunTime：9 sec
 '''
@@ -64,13 +64,13 @@ if __name__ == '__main__':
                         help='activate data visualization')
     parser.add_argument('--harvest', type=bool, default=True,
                         help='activate data visualization')
-    parser.add_argument('--fast', type=bool, default=True,
-                        help='use fast version to visualization')
     parser.add_argument('--today_dt', default=datetime.date.today()-datetime.timedelta(days=0),
                         help='today datetime format')
     parser.add_argument('--fig_cloud', default=False,
                         help='upload figure to cloud')
-    parser.add_argument('--demo', type=bool, default=False,
+    parser.add_argument('--fast', type=bool, default=True,
+                        help='use fast version to visualization')
+    parser.add_argument('--demo', type=bool, default=True,
                         help='run demo.')
     args = parser.parse_args()
 
@@ -92,4 +92,6 @@ if __name__ == '__main__':
                           args.today_dt, root_path=config['path']['root_path']),
                       cloud_root_path=config['path']['cloud_root_path'])
     analyze.DataAnalyze
-    analyze.StatisticCarryTime
+
+    if args.activate:
+        analyze.StatisticCarryTime
