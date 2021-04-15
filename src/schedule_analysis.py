@@ -2,12 +2,13 @@
 Author: Holmescao
 Date: 2021-03-16 12:57:18
 LastEditors: Holmescao
-LastEditTime: 2021-04-14 21:39:46
+LastEditTime: 2021-04-15 20:12:30
 Description: 自动分析schedule文档信息，用于个人时间分析与管理
 RunTime：9 sec
 '''
 
 
+import os
 import datetime
 from utils.data_analyze import Analyze
 from utils.data_process import Schedule
@@ -68,9 +69,11 @@ if __name__ == '__main__':
                         help='today datetime format')
     parser.add_argument('--fig_cloud', default=False,
                         help='upload figure to cloud')
+    parser.add_argument('--schedule_cloud', default=True,
+                        help='upload schedule file to cloud')
     parser.add_argument('--fast', type=bool, default=True,
                         help='use fast version to visualization')
-    parser.add_argument('--demo', type=bool, default=True,
+    parser.add_argument('--demo', type=bool, default=False,
                         help='run demo.')
     args = parser.parse_args()
 
@@ -95,3 +98,21 @@ if __name__ == '__main__':
 
     if args.activate:
         analyze.StatisticCarryTime
+
+   # 自动将schedule上传到云
+    if args.schedule_cloud:
+        print(f'uploading schedule to cloud.')
+        # add
+        add = os.popen("git add .").read()
+        # status
+        status = os.popen("git status").read()
+        print(status)
+        # commit
+        commit = os.popen("git commit -m 'test'").read()
+        # # git remote
+        # url = "https://gitee.com/holmescao/daily"
+        # remote = os.popen(f"git remote add origin {url}").read()
+        # print(remote)
+        # git push
+        print(push=os.popen("git push -u origin master").read())
+        print("success upload schedule to cloud!")
