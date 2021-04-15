@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 12:57:18
 LastEditors: Holmescao
-LastEditTime: 2021-04-15 20:12:30
+LastEditTime: 2021-04-15 20:13:02
 Description: 自动分析schedule文档信息，用于个人时间分析与管理
 RunTime：9 sec
 '''
@@ -114,5 +114,6 @@ if __name__ == '__main__':
         # remote = os.popen(f"git remote add origin {url}").read()
         # print(remote)
         # git push
-        print(push=os.popen("git push -u origin master").read())
+        push = os.popen("git push -u origin master").read()
+        print(push)
         print("success upload schedule to cloud!")
