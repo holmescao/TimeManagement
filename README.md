@@ -180,13 +180,17 @@ tips：下载源码解压后，进入`src`目录，直接运行`schedule_analysi
 - 设定要分析的日期
   - 在`schedule_analysis.py`程序中，设置参数`today_dt`，来决定分析哪天的内容。默认为当天
 - 选择是否将图片上传到云服务器（放在云的图片可以让你实现随地打开都可显示，否则只能你运行的设备上可以查看图片）
-  - 在在`schedule_analysis.py`程序中，设置参数`fig_cloud`，来决定是否将图片上传到云。默认为不上传。若要上传，则首次上传前需要如下步骤：
+  - 在`schedule_analysis.py`程序中，设置参数`fig_cloud`，来决定是否将图片上传到云。默认为不上传。若要上传，则首次上传前需要如下步骤：
     - 下载、配置`PicGo`，选定一个图床，比如`Gitee`（还没有自己图床的可以参考：[PicGo相关配置流程](https://8d4b1130.wiz06.com/wapp/pages/view/share/s/2diN4M0n917G2t5rDb1YqQeg0rAC1v1RPkUW23_eq232Bep_)；我自己踩过坑，把真正有用的流程整理了出来，按这走完流程应该没问题）
     - 在`config.py`文件中修改`config.path.cloud_root_path`，是你存放图片的云路径（根据你选择的图床而定）
+- 选择是否将markdown文件git到云服务器，如github。
+  - 在`schedule_analysis.py`程序中，设置参数`schedule_cloud`，来决定是否将markdown文件上传到云。默认为不上传。若要上传，则首次上传前需要如下步骤：
+    - 安装git命令
+    - 配置仓库。在服务器如github创建好仓库用于存放markdown，并在本地存放markdown的目录下clone该仓库。（因为本项目的脚本只负责新增的内容的上传，即只执行git中的`add、status、commit、push`这4个命令。）
 
 ##### 2.2 运行程序
 
-- 运行`schedule_analysis.py`，等待10秒内即可获得所有分析结果。分析结果会自动插入到markdown文件中，并会备份在`./output/figure/`目录下，也会上传到图床。
+- 运行`schedule_analysis.py`，等待**10**秒内即可获得所有分析结果。分析结果会自动插入到markdown文件中，并会备份在`./output/figure/`目录下，也会上传到图床。
 
 ## 依赖
 

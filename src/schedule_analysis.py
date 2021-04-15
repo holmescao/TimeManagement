@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 12:57:18
 LastEditors: Holmescao
-LastEditTime: 2021-04-15 20:15:19
+LastEditTime: 2021-04-15 20:41:29
 Description: 自动分析schedule文档信息，用于个人时间分析与管理
 RunTime：9 sec
 '''
@@ -36,6 +36,7 @@ def DemoSetting(args, config):
     args.fast = False
     args.today_dt = datetime.date.today()
     args.fig_cloud = False
+    args.schedule_cloud = False
 
     config['path']['root_path'] = './demo/schedule/'
     config['path']['tmp_path'] = './demo/tmp/'
@@ -57,6 +58,20 @@ def DemoSetting(args, config):
     return args, config
 
 
+def GitFlow(path, commit):
+
+    print(f'uploading {path} to cloud.')
+
+    cd = f"cd {path} && "
+    os.system(cd+"git add .")  # add
+    os.system(cd+"git status")  # status
+    os.system(cd+f"git commit -m '{commit}'")  # commit
+    status = os.system(cd+"git push origin master")  # git push
+
+    if status == 0:
+        print("success uploaded to cloud!")
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--activate', type=bool, default=True,
@@ -67,7 +82,7 @@ if __name__ == '__main__':
                         help='activate data visualization')
     parser.add_argument('--today_dt', default=datetime.date.today()-datetime.timedelta(days=0),
                         help='today datetime format')
-    parser.add_argument('--fig_cloud', default=False,
+    parser.add_argument('--fig_cloud', default=True,
                         help='upload figure to cloud')
     parser.add_argument('--schedule_cloud', default=True,
                         help='upload schedule file to cloud')
@@ -77,7 +92,7 @@ if __name__ == '__main__':
                         help='run demo.')
     args = parser.parse_args()
 
-    # demo情况下，默认不将图片传到云
+    # demo情况下，默认不将图片、schedule文件传到云
     if args.demo:
         args, config = DemoSetting(args, config)
 
@@ -99,23 +114,6 @@ if __name__ == '__main__':
     if args.activate:
         analyze.StatisticCarryTime
 
-   # 自动将schedule上传到云
     if args.schedule_cloud:
-        print(f'uploading schedule to cloud.')
-        # cd
-        os.system(f"cd {config['path']['root_path']}")
-        # add
-        add = os.popen("git add .").read()
-        # status
-        status = os.popen("git status").read()
-        print(status)
-        # commit
-        commit = os.popen("git commit -m 'test'").read()
-        # # git remote
-        # url = "https://gitee.com/holmescao/daily"
-        # remote = os.popen(f"git remote add origin {url}").read()
-        # print(remote)
-        # git push
-        push = os.popen("git push origin master").read()
-        print(push)
-        print("success upload schedule to cloud!")
+        GitFlow(path=config['path']['root_path'],
+                commit=args.today_dt)
