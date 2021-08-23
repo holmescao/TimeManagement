@@ -2,7 +2,7 @@
 Author: Holmescao
 Date: 2021-03-16 13:22:08
 LastEditors: Holmescao
-LastEditTime: 2021-04-12 14:46:29
+LastEditTime: 2021-08-12 15:45:40
 Description: 用于时间管理分析的通用函数
 '''
 import sys
@@ -63,7 +63,7 @@ def ExtractDateFromStr(string):
     string = string.replace("年", "-")
     string = string.replace("月", "-")
     string = string.replace("日", "-")
-    date_re_str = r"(\d{4}-\d{2}-\d{2})"
+    date_re_str = r"(\d{4}-\d{1,2}-\d{1,2})"
     try:
         match = re.search(date_re_str, string)
         date = match.group(1)

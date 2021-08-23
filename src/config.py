@@ -2,14 +2,14 @@
 Author: Holmescao
 Date: 2021-03-11 21:32:10
 LastEditors: Holmescao
-LastEditTime: 2021-04-11 17:33:54
+LastEditTime: 2021-04-22 15:02:40
 Description: 
 '''
 config = {
     'path': {
-        'root_path': './schedule/daily/',
-        "tmp_path": './tmp/',
-        "output_path": './output/',
+        'root_path': 'schedule/daily/',
+        "tmp_path": 'tmp/',
+        "output_path": 'output/',
         "cloud_root_path": "https://gitee.com/holmescao/figure-bed/raw/master/img/",
     },
     'data_columns': {
