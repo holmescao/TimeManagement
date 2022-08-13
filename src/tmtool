@@ -1,0 +1,110 @@
+#!/bin/bash
+source activate TM # replace your virtual env
+###
+ # @Author: Holmescao
+ # @Date: 2021-04-22 13:33:41
+ # @LastEditors: Holmescao
+ # @LastEditTime: 2021-04-22 19:19:34
+ # @Description: TimeManagement toolkit
+### 
+
+
+SUBJECT=TimeManagement-toolkit
+VERSION=1.0
+USAGE="
+USAGE
+    tmtool [-hv] [-fms] [-d] lastday
+OPTIONS
+    -h                               print help information
+    -v                               print version
+    -d                               date to be analyzed. (default: 0)
+    -f                               upload figure to cloud.
+    -m                               run demo.
+    -s                               upload schedule file to cloud.
+    
+EXAMPLES1: analysis last day data, and not upload fig and schedule to cloud.
+    tmtool -d 1 
+EXAMPLES2: analysis current day data, and upload fig and tmtool to cloud.
+    tmtool -fs
+"
+
+
+# --- Option processing --------------------------------------------
+if [ $# == 0 ] ; then
+    echo "$USAGE"
+    exit 1;
+fi
+
+# init params
+day=0
+day_flag=False
+fig_cloud=False
+demo=False
+schedule_cloud=False
+
+while getopts ":vhdfms" optname
+  do
+    case "$optname" in
+      "v")
+        echo "Version $VERSION"
+        exit 0;
+        ;;
+      "h")
+        echo "$USAGE"
+        exit 0;
+        ;;
+      "d")
+        day_flag=True
+        ;;
+      "f")
+        fig_cloud=True
+        ;;
+      "m")
+        demo=True
+        ;;
+      "s")
+        schedule_cloud=True
+        ;;
+      "?")
+        echo "Unknown option $OPTARG"
+        exit 0;
+        ;;
+      ":")
+        echo "No argument value for option $OPTARG"
+        exit 0;
+        ;;
+      *)
+        echo "Unknown error while processing options"
+        exit 0;
+        ;;
+    esac
+  done
+
+shift $(($OPTIND - 1))
+
+# -----------------------------------------------------------------
+
+LOCK_FILE=/tmp/${SUBJECT}.lock
+
+if [ -f "$LOCK_FILE" ]; then
+	echo "Script is already running"
+	trap "rm -f $LOCK_FILE" EXIT
+	exit
+fi
+
+# -----------------------------------------------------------------
+trap "rm -f $LOCK_FILE" EXIT
+touch $LOCK_FILE 
+
+
+# -----------------------------------------------------------------
+#  SCRIPT LOGIC
+# -----------------------------------------------------------------
+if [ "$day_flag" = True ]; then
+    day=$1
+fi
+
+# build
+script_path=`dirname "$0"`
+
+python $script_path/schedule_analysis.py --day $day --fig_cloud $fig_cloud --demo $demo --schedule_cloud $schedule_cloud --script_path "$script_path/"
